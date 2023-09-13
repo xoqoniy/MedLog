@@ -29,9 +29,11 @@ public class Repository<T> : IRepository<T> where T : Auditable {
         return await _collection.Find(filter).FirstOrDefaultAsync();
     }
 
-    public async Task CreateAsync(T entity)
+    public async Task<T> CreateAsync(T entity)
     {
         await _collection.InsertOneAsync(entity);
+        return entity;
+        
     }
 
     public async Task UpdateAsync(T entity)

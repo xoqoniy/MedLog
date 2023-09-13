@@ -2,7 +2,9 @@
 using MedLog.DAL.IRepositories;
 using MedLog.Domain.Entities;
 using MedLog.Service.DTOs.UserDTOs;
+using MedLog.Service.Exceptions;
 using MedLog.Service.Interfaces;
+using System.Reflection.Metadata.Ecma335;
 
 namespace MedLog.Service.Services
 {
@@ -17,29 +19,53 @@ namespace MedLog.Service.Services
             this.mapper = mapper;
         }
 
-        public Task<UserResultDto> CreateAsync(UserCreationDto user)
+        public async Task<UserResultDto> CreateAsync(UserCreationDto user)
         {
-            throw new NotImplementedException();
+            var mapped = mapper.Map<User>(user);
+            mapped.CreatedAt = DateTime.UtcNow;
+            await repository.CreateAsync(mapped);
+            return mapper.Map<UserResultDto>(mapped);
+
         }
 
-        public Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            var user = await repository.GetAsync(id);
+            if (user is null)
+            {
+                throw new MedLogException(404, "User not found");
+            }
+            await repository.RemoveAsync(id);
+            return true;
         }
 
-        public Task GetAllAsync()
+        public async Task<IEnumerable<UserResultDto>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            var users = await repository.GetAllAsync();
+            return mapper.Map<IEnumerable<UserResultDto>>(users);
         }
 
-        public Task<UserResultDto?> GetAsync(int id)
+        public async Task<UserResultDto> GetAsync(int id)
         {
-            throw new NotImplementedException();
+            var user = await repository.GetAsync(id);
+            if(user is null)
+            {
+                throw new MedLogException(404, "User not found");
+            }
+            return mapper.Map<UserResultDto>(user);
         }
 
-        public Task<UserResultDto> UpdateAsync(UserUpdateDto user)
+        public async Task<UserResultDto> UpdateAsync(UserUpdateDto dto)
         {
-            throw new NotImplementedException();
+            var userId = dto.Id;
+            var user = await repository.GetAsync(userId);
+            if(user is null)
+            {
+                throw new MedLogException(404, "User not found");
+            }
+            var modifiedUser = mapper.Map(dto, user);
+            modifiedUser.LastUpdatedAt = DateTime.UtcNow;
+            return mapper.Map<UserResultDto>(user);
         }
     }
 }
