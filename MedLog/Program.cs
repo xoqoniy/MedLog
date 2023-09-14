@@ -1,3 +1,7 @@
+using AutoMapper;
+using MedLog.Extensions;
+using MedLog.Service.Extentions;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -10,6 +14,9 @@ builder.Services.AddControllers(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//Registering Services
+builder.Services.AddCustomServices();
+builder.Services.AddAutoMapper(typeof(MapperProfile));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

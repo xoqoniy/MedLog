@@ -9,7 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MedLog.DAL\MedLog.DAL.csproj" />
+    <ProjectReference Include="..\MedLog.Service\MedLog.Service.csproj" />
   </ItemGroup>
 
 </Project>
