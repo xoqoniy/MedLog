@@ -2,6 +2,7 @@
 using MedLog.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection;
+using System.Security;
 
 namespace MedLog.Controllers
 {
@@ -15,37 +16,35 @@ namespace MedLog.Controllers
         }
 
 
-        [HttpGet("id")]
-        public async Task<ActionResult<UserResultDto>> GetAsync(int id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<UserResultDto>> GetAsync(string id)
         {
             var user = await userService.GetAsync(id);
             return user;
         }
 
-        [HttpPost("id")]
+        [HttpPost("{id}")]
         public async Task<UserResultDto> PostAsync(UserCreationDto dto)
         {
             var user = await userService.CreateAsync(dto);
             return user;
         }
 
-        [HttpPut("id")]
+        [HttpPut("{id}")]
         public async Task<UserResultDto> PutAsync(UserUpdateDto dto)
         {
             var user = await userService.UpdateAsync(dto);
             return user;
         }
 
-        [HttpDelete("id")]
-        public async Task<ActionResult<bool>> DeleteAsync(int id)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<bool>> DeleteAsync(string id)
         {
-            
-                var user = await userService.DeleteAsync(id);
-                return user;
-
+             var user = await userService.DeleteAsync(id);
+             return user;
         }
 
-        //GET /users
+        //GET/users
         [HttpGet]
         public async Task<IEnumerable<UserResultDto>> GetAllAsync()
         {

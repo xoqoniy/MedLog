@@ -1,4 +1,5 @@
-﻿
+﻿#pragma warning disable
+
 using MedLog.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
 

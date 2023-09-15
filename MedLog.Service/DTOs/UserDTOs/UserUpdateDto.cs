@@ -3,11 +3,12 @@
 using MedLog.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
 
+#pragma warning disable
 namespace MedLog.Service.DTOs.UserDTOs;
 
 public class UserUpdateDto
 {
-    public int Id { get; set; }
+    public string Id { get; set; }
     [Required(ErrorMessage = "Ismni to'ldirish kerak")]
     public string FirstName { get; set; }
 

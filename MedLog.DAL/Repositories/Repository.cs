@@ -13,7 +13,7 @@ public class Repository<T> : IRepository<T> where T : Auditable {
 
     public Repository()
     {
-        var mongoClient = new MongoClient("mongodb://localhost:7103");
+        var mongoClient = new MongoClient("mongodb://127.0.0.1:27017");
         var database = mongoClient.GetDatabase("MedLog");
         _collection = database.GetCollection<T>(collectionName);
     }
@@ -23,7 +23,7 @@ public class Repository<T> : IRepository<T> where T : Auditable {
         return await _collection.Find(_filterBuilder.Empty).ToListAsync();
     }
 
-    public async Task<T> GetAsync(int id)
+    public async Task<T> GetAsync(string id)
     {
         FilterDefinition<T> filter = _filterBuilder.Eq(entity => entity.Id, id);
         return await _collection.Find(filter).FirstOrDefaultAsync();
@@ -46,7 +46,7 @@ public class Repository<T> : IRepository<T> where T : Auditable {
         await _collection.ReplaceOneAsync(filter, entity);
     }
 
-    public async Task<bool> RemoveAsync(int id)
+    public async Task<bool> RemoveAsync(string id)
     {
         FilterDefinition<T> filter = _filterBuilder.Eq(entity => entity.Id, id);
         await _collection.DeleteOneAsync(filter);
