@@ -18,7 +18,7 @@ public class Repository<T> : IRepository<T> where T : Auditable {
         _collection = database.GetCollection<T>(collectionName);
     }
 
-    public async Task<IReadOnlyCollection<T>> GetAllAsync()
+    public async Task<List<T>> GetAllAsync()
     {
         return await _collection.Find(_filterBuilder.Empty).ToListAsync();
     }

@@ -39,10 +39,10 @@ namespace MedLog.Service.Services
             return true;
         }
 
-        public async Task<IEnumerable<UserResultDto>> GetAllAsync()
+        public async Task<List<UserResultDto>> GetAllAsync()
         {
             var users = await repository.GetAllAsync();
-            return mapper.Map<IEnumerable<UserResultDto>>(users);
+            return mapper.Map<List<UserResultDto>>(users);
         }
 
         public async Task<UserResultDto> GetAsync(int id)
