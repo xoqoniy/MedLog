@@ -23,15 +23,15 @@ namespace MedLog.Controllers
             return user;
         }
 
-        [HttpPost("{id}")]
-        public async Task<UserResultDto> PostAsync(UserCreationDto dto)
+        [HttpPost]
+        public async Task<ActionResult<UserResultDto>> PostAsync(UserCreationDto dto)
         {
             var user = await userService.CreateAsync(dto);
             return user;
         }
 
         [HttpPut("{id}")]
-        public async Task<UserResultDto> PutAsync(UserUpdateDto dto)
+        public async Task<ActionResult<UserResultDto>> PutAsync(UserUpdateDto dto)
         {
             var user = await userService.UpdateAsync(dto);
             return user;
@@ -46,7 +46,7 @@ namespace MedLog.Controllers
 
         //GET/users
         [HttpGet]
-        public async Task<IEnumerable<UserResultDto>> GetAllAsync()
+        public async Task<ActionResult<IEnumerable<UserResultDto>>> GetAllAsync()
         {
             var users = await userService.GetAllAsync();
             return users;
