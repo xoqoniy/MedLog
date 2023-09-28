@@ -1,8 +1,15 @@
 using AutoMapper;
+using MedLog.DAL.DbContexts;
+using MedLog.DAL.Repositories;
+using MedLog.Domain.Entities;
 using MedLog.Extensions;
 using MedLog.Service.Extentions;
 
 var builder = WebApplication.CreateBuilder(args);
+
+//MongoDb Database Configuration
+builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDbSettings"));
+//builder.Services.AddSingleton<Repository<User>>();
 
 // Add services to the container.
 

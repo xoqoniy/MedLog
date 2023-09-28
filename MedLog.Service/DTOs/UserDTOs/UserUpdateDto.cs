@@ -8,7 +8,7 @@ namespace MedLog.Service.DTOs.UserDTOs;
 
 public class UserUpdateDto
 {
-    public string Id { get; set; }
+    public string? Id { get; set; }
     [Required(ErrorMessage = "Ismni to'ldirish kerak")]
     public string FirstName { get; set; }
 

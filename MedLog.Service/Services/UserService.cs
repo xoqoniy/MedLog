@@ -10,10 +10,10 @@ namespace MedLog.Service.Services
 {
     public class UserService : IUserService
     {
-        private readonly IRepository<User> repository;
+        private readonly IRepository repository;
         private readonly IMapper mapper;
 
-        public UserService(IRepository<User> repository, IMapper mapper)
+        public UserService(IRepository repository, IMapper mapper)
         {
             this.repository = repository;
             this.mapper = mapper;
