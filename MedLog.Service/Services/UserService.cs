@@ -55,16 +55,17 @@ namespace MedLog.Service.Services
             return mapper.Map<UserResultDto>(user);
         }
 
-        public async Task<UserResultDto> UpdateAsync(UserUpdateDto dto)
+        public async Task<UserResultDto> UpdateAsync(string id, UserUpdateDto dto)
         {
-            var userId = dto.Id;
-            var user = await repository.GetAsync(userId);
+            
+            var user = await repository.GetAsync(id);
             if(user is null)
             {
                 throw new MedLogException(404, "User not found");
             }
             var modifiedUser = mapper.Map(dto, user);
             modifiedUser.LastUpdatedAt = DateTime.UtcNow;
+            await repository.UpdateAsync(modifiedUser);
             return mapper.Map<UserResultDto>(user);
         }
     }

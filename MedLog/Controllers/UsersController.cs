@@ -31,9 +31,9 @@ namespace MedLog.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<UserResultDto>> PutAsync(UserUpdateDto dto)
+        public async Task<ActionResult<UserResultDto>> PutAsync(string id, UserUpdateDto dto)
         {
-            var user = await userService.UpdateAsync(dto);
+            var user = await userService.UpdateAsync(id,dto);
             return user;
         }
 
