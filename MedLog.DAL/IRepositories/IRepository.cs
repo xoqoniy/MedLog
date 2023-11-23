@@ -5,11 +5,11 @@ using MedLog.Domain.Entities;
 
 namespace MedLog.DAL.IRepositories;
 
-public interface IRepository
+public interface IRepository<T> where T : Auditable
 {
-    Task<List<User>> GetAllAsync();
-    Task<User> GetAsync(string id);
-    Task<User> CreateAsync(User user);
-    Task UpdateAsync(User entity);
+    Task<List<T>> GetAllAsync();
+    Task<T> GetAsync(string id);
+    Task<T> CreateAsync(T user);
+    Task UpdateAsync(T entity);
     Task<bool> RemoveAsync(string id);
 }
