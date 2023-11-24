@@ -1,6 +1,4 @@
-﻿
-
-using MedLog.Service.DTOs.UserDTOs;
+﻿using MedLog.Service.DTOs.UserDTOs;
 
 namespace MedLog.Service.Interfaces;
 
