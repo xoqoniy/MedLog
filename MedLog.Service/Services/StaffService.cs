@@ -5,11 +5,7 @@ using MedLog.Service.DTOs.StaffDTOs;
 using MedLog.Service.DTOs.UserDTOs;
 using MedLog.Service.Exceptions;
 using MedLog.Service.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace MedLog.Service.Services
 {
