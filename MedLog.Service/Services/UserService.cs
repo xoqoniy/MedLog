@@ -4,7 +4,6 @@ using MedLog.Domain.Entities;
 using MedLog.Service.DTOs.UserDTOs;
 using MedLog.Service.Exceptions;
 using MedLog.Service.Interfaces;
-using System.Reflection.Metadata.Ecma335;
 
 namespace MedLog.Service.Services
 {
@@ -57,15 +56,25 @@ namespace MedLog.Service.Services
 
         public async Task<UserResultDto> UpdateAsync(string id, UserUpdateDto dto)
         {
-            
             var user = await repository.GetAsync(id);
-            if(user is null)
+
+            if (user is null)
             {
                 throw new MedLogException(404, "User not found");
             }
-            var modifiedUser = mapper.Map(dto, user);
-            modifiedUser.LastUpdatedAt = DateTime.UtcNow;
-            await repository.UpdateAsync(modifiedUser);
+
+            // Map the properties from the update DTO to the existing user
+            mapper.Map(dto, user);
+
+            // Update additional properties if needed
+            user.LastUpdatedAt = DateTime.UtcNow;
+
+            // Perform server-side validation if needed
+
+            // Update the user
+            await repository.UpdateAsync(user);
+
+            // Return the updated user DTO
             return mapper.Map<UserResultDto>(user);
         }
     }

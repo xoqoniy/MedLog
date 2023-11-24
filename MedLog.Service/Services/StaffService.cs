@@ -24,9 +24,9 @@ namespace MedLog.Service.Services
             this.mapper = mapper;
         }
 
-        public async Task<StaffResultDto> CreateAsync(StaffCreationDto user)
+        public async Task<StaffResultDto> CreateAsync(StaffCreationDto staff)
         {
-            var mapped = mapper.Map<Staff>(user);
+            var mapped = mapper.Map<Staff>(staff);
             mapped.CreatedAt = DateTime.UtcNow;
             await repository.CreateAsync(mapped);
             return mapper.Map<StaffResultDto>(mapped);
@@ -35,10 +35,10 @@ namespace MedLog.Service.Services
 
         public async Task<bool> DeleteAsync(string id)
         {
-            var user = await repository.GetAsync(id);
-            if (user is null)
+            var staff = await repository.GetAsync(id);
+            if (staff is null)
             {
-                throw new MedLogException(404, "User not found");
+                throw new MedLogException(404, "Staff is not found");
             }
             await repository.RemoveAsync(id);
             return true;
@@ -46,32 +46,32 @@ namespace MedLog.Service.Services
 
         public async Task<List<StaffResultDto>> GetAllAsync()
         {
-            var users = await repository.GetAllAsync();
-            return mapper.Map<List<StaffResultDto>>(users);
+            var staff = await repository.GetAllAsync();
+            return mapper.Map<List<StaffResultDto>>(staff);
         }
 
         public async Task<StaffResultDto> GetAsync(string id)
         {
-            var user = await repository.GetAsync(id);
-            if (user is null)
+            var staff = await repository.GetAsync(id);
+            if (staff is null)
             {
-                throw new MedLogException(404, "User not found");
+                throw new MedLogException(404, "Staff could not found");
             }
-            return mapper.Map<StaffResultDto>(user);
+            return mapper.Map<StaffResultDto>(staff);
         }
 
         public async Task<StaffResultDto> UpdateAsync(string id, StaffUpdateDto dto)
         {
 
-            var user = await repository.GetAsync(id);
-            if (user is null)
+            var staff = await repository.GetAsync(id);
+            if (staff is null)
             {
-                throw new MedLogException(404, "User not found");
+                throw new MedLogException(404, "Staff could not found");
             }
-            var modifiedUser = mapper.Map(dto, user);
-            modifiedUser.LastUpdatedAt = DateTime.UtcNow;
-            await repository.UpdateAsync(modifiedUser);
-            return mapper.Map<StaffResultDto>(user);
+            var modifiedStaff = mapper.Map(dto, staff);
+            modifiedStaff.LastUpdatedAt = DateTime.UtcNow;
+            await repository.UpdateAsync(modifiedStaff);
+            return mapper.Map<StaffResultDto>(modifiedStaff);
         }
     }
 }

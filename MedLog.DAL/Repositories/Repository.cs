@@ -8,23 +8,31 @@ using Microsoft.Extensions.Options;
 
 namespace MedLog.DAL.Repositories;
 
-public class Repository<T> : IRepository<T> where T : Auditable{ 
-
-    //private const string collectionName = "items";
+public class Repository<T> : IRepository<T> where T : Auditable
+{
+    // MongoDB collection for the specified entity type T
     private readonly IMongoCollection<T> _collection;
-    private readonly FilterDefinitionBuilder<User> _filterBuilder = Builders<User>.Filter;
 
+    // Filter builder for creating MongoDB filter definitions
+    private readonly FilterDefinitionBuilder<T> _filterBuilder = Builders<T>.Filter;
+
+    // Constructor that takes MongoDB settings as a dependency
     public Repository(IOptions<MongoDbSettings> mongodbSettings)
     {
-        MongoClient client = new(mongodbSettings.Value.ConnectionStringURL);
-        IMongoDatabase database = client.GetDatabase(mongodbSettings.Value.DatabaseName);
-        //_collection = database.GetCollection<T>(mongodbSettings.Value.CollectionName);
+        // Create a MongoDB client using the connection string from settings
+        MongoClient client = new MongoClient(mongodbSettings.Value.ConnectionStringURL);
 
+        // Get the MongoDB database using the database name from settings
+        IMongoDatabase database = client.GetDatabase(mongodbSettings.Value.DatabaseName);
+
+        // Determine the collection name based on the entity type T
         var collectionName = GetCollectionName<T>(mongodbSettings);
+
+        // Get or create the MongoDB collection for the specified entity type T
         _collection = database.GetCollection<T>(collectionName);
-        
     }
 
+    // Method to determine the collection name based on the entity type T
     private string GetCollectionName<T>(IOptions<MongoDbSettings> mongodbSettings)
     {
         // Use the type of T to determine the appropriate collection name
@@ -37,65 +45,47 @@ public class Repository<T> : IRepository<T> where T : Auditable{
         };
     }
 
-    public async Task<T> CreateAsync(T user)
+    // Method to asynchronously create a new document in the MongoDB collection
+    public async Task<T> CreateAsync(T entity)
     {
-        await _collection.InsertOneAsync(user);
-        return user;
+        await _collection.InsertOneAsync(entity);
+        return entity;
     }
 
+    // Method to asynchronously retrieve all documents from the MongoDB collection
     public async Task<List<T>> GetAllAsync()
     {
-        return await _collection.Find(Builders<T>.Filter.Empty).ToListAsync();
+        return await _collection.Find(_filterBuilder.Empty).ToListAsync();
     }
 
+    // Method to asynchronously retrieve a document by its ID from the MongoDB collection
     public async Task<T> GetAsync(string id)
     {
-        FilterDefinition<T> filter = Builders<T>.Filter.Eq(entity => entity.Id, id);
+        FilterDefinition<T> filter = _filterBuilder.Eq(entity => entity.Id, id);
         return await _collection.Find(filter).FirstOrDefaultAsync();
     }
 
-    public Task<bool> RemoveAsync(string id)
+    // Method to asynchronously remove a document by its ID from the MongoDB collection
+    public async Task<bool> RemoveAsync(string id)
     {
-        throw new NotImplementedException();
+        FilterDefinition<T> filter = _filterBuilder.Eq(entity => entity.Id, id);
+        await _collection.DeleteOneAsync(filter);
+        return true;
     }
 
-    public Task UpdateAsync(T entity)
+    // Method to asynchronously update a document in the MongoDB collection
+    public async Task UpdateAsync(T entity)
     {
-        throw new NotImplementedException();
+        if (entity is null)
+        {
+            throw new ArgumentNullException(nameof(entity));
+        }
+
+        // Create a filter for the existing document based on its ID
+        FilterDefinition<T> filter = Builders<T>.Filter.Eq(existingentity => existingentity.Id, entity.Id);
+
+        // Replace the existing document with the updated entity
+        await _collection.ReplaceOneAsync(filter, entity);
     }
-
-    //public async Task<List<User>> GetAllAsync()
-    //{
-    //    return await _userscollection.Find(_filterBuilder.Empty).ToListAsync();
-    //}
-
-    //public async Task<User> GetAsync(string id)
-    //{
-    //    FilterDefinition<User> filter = _filterBuilder.Eq(entity => entity.Id, id);
-    //    return await _userscollection.Find(filter).FirstOrDefaultAsync();
-    //}
-
-    //public async Task<User> CreateAsync(User user)
-    //{
-    //    await _userscollection.InsertOneAsync(user);
-    //    return user;
-
-    //}
-
-    //public async Task UpdateAsync(User user)
-    //{
-    //    if (user is null)
-    //    {
-    //        throw new ArgumentNullException(nameof(user));
-    //    }
-    //    FilterDefinition<User> filter = _filterBuilder.Eq(existingentity => existingentity.Id, user.Id);
-    //    await _userscollection.ReplaceOneAsync(filter, user);
-    //}
-
-    //public async Task<bool> RemoveAsync(string id)
-    //{
-    //    FilterDefinition<User> filter = _filterBuilder.Eq(entity => entity.Id, id);
-    //    await _userscollection.DeleteOneAsync(filter);
-    //    return true;
-    //}
 }
+
