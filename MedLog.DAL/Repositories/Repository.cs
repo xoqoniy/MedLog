@@ -20,7 +20,7 @@ public class Repository<T> : IRepository<T> where T : Auditable
     public Repository(IOptions<MongoDbSettings> mongodbSettings)
     {
         // Create a MongoDB client using the connection string from settings
-        MongoClient client = new MongoClient(mongodbSettings.Value.ConnectionStringURL);
+        MongoClient client = new(mongodbSettings.Value.ConnectionStringURL);
 
         // Get the MongoDB database using the database name from settings
         IMongoDatabase database = client.GetDatabase(mongodbSettings.Value.DatabaseName);
@@ -33,7 +33,7 @@ public class Repository<T> : IRepository<T> where T : Auditable
     }
 
     // Method to determine the collection name based on the entity type T
-    private string GetCollectionName<T>(IOptions<MongoDbSettings> mongodbSettings)
+    static string GetCollectionName<T>(IOptions<MongoDbSettings> mongodbSettings)
     {
         // Use the type of T to determine the appropriate collection name
         return typeof(T) switch
