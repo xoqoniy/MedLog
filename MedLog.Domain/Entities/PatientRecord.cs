@@ -1,5 +1,4 @@
 ﻿using MedLog.Domain.Common;
-using Microsoft.AspNetCore.Http;
 using MongoDB.Bson;
 
 namespace MedLog.Domain.Entities;
