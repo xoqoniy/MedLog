@@ -5,7 +5,7 @@ namespace MedLog.Domain.Entities
 {
     public class Appointment : Auditable
     {
-        public string? UserId { get; set; }  // ID of the patient booking the appointment
+       
         [BsonIgnore]
         public User? User { get; set; } // Navigation property for easy retrieval of associated patient information
         public string? StaffId { get; set; }  // ID of the staff (doctor) handling the appointment
