@@ -7,18 +7,10 @@ namespace MedLog.Domain.Entities;
 
 public class PatientRecord : Auditable
 {
-    public Staff? Staff { get; set; }
-    [BsonRepresentation(BsonType.ObjectId)]
-    public string StaffId { get; set; }
-    public User? User { get; set; }
-    [BsonRepresentation(BsonType.ObjectId)]
-
-    public string UserId { get; set; }
-    public string Diagnosis { get; set; }
-    public string Symptoms { get; set; }
-    public string Medications { get; set; }
-    public string Procedures { get; set; }
-    public string Allergies { get; set; }
-    public string Description { get; set; }
-
+    public User Patient { get; set; } // Reference to the patient (User entity)
+    public string FileName { get; set; } // Name of the file
+    public long FileSize { get; set; } // Size of the file
+    public string? FileType { get; set; } // Type of the file (e.g., PDF, image, etc.)
+    public string? Description { get; set; } // Description of the record
+    public ObjectId FileId { get; set; } // ObjectId of the file in GridFS
 }
