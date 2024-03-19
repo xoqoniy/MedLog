@@ -6,7 +6,7 @@ using MedLog.Domain.Enums;
 
 public class Staff : Auditable
 {
-    public string HospitalName { get; set; }
+    public Hospital HospitalName { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string PhoneNumber { get; set; }
