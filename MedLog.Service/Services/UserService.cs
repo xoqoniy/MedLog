@@ -4,6 +4,7 @@ using MedLog.Domain.Entities;
 using MedLog.Service.DTOs.UserDTOs;
 using MedLog.Service.Exceptions;
 using MedLog.Service.Interfaces;
+using MongoDB.Bson;
 
 namespace MedLog.Service.Services
 {
@@ -27,7 +28,7 @@ namespace MedLog.Service.Services
 
         }
 
-        public async Task<bool> DeleteAsync(string id)
+        public async Task<bool> DeleteAsync(ObjectId id)
         {
             var user = await repository.GetAsync(id);
             if (user is null)
@@ -44,7 +45,7 @@ namespace MedLog.Service.Services
             return mapper.Map<List<UserResultDto>>(users);
         }
 
-        public async Task<UserResultDto> GetAsync(string id)
+        public async Task<UserResultDto> GetAsync(ObjectId id)
         {
             var user = await repository.GetAsync(id);
             if(user is null)
@@ -54,7 +55,7 @@ namespace MedLog.Service.Services
             return mapper.Map<UserResultDto>(user);
         }
 
-        public async Task<UserResultDto> UpdateAsync(string id, UserUpdateDto dto)
+        public async Task<UserResultDto> UpdateAsync(ObjectId id, UserUpdateDto dto)
         {
             var user = await repository.GetAsync(id);
 
@@ -67,6 +68,7 @@ namespace MedLog.Service.Services
             mapper.Map(dto, user);
 
             // Update additional properties if needed
+
             user.LastUpdatedAt = DateTime.UtcNow;
 
             // Perform server-side validation if needed

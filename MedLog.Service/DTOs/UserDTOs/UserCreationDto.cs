@@ -1,5 +1,6 @@
 ﻿#pragma warning disable
 
+using MedLog.Domain.Entities;
 using MedLog.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
 
@@ -19,7 +20,6 @@ public class UserCreationDto
     public int Age { get; set; }
     public Gender Gender { get; set; }
     public int BloodType { get; set; }
-    public string Address { get; set; }
-    public Region Region { get; set; }
-    public string City { get; set; }
+    public Address Address { get; set; }
+
 }
