@@ -5,6 +5,7 @@ using MedLog.Domain.Entities;
 
 using MedLog.DAL.DbContexts;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 
 namespace MedLog.DAL.Repositories;
 
@@ -39,7 +40,6 @@ public class Repository<T> : IRepository<T> where T : Auditable
         return typeof(T) switch
         {
             Type t when t == typeof(User) => mongodbSettings.Value.UsersCollection,
-            Type t when t == typeof(Staff) => mongodbSettings.Value.StaffCollection,
             // Add more cases for other entities as needed
             _ => throw new NotSupportedException($"Unsupported entity type: {typeof(T)}"),
         };
@@ -59,14 +59,14 @@ public class Repository<T> : IRepository<T> where T : Auditable
     }
 
     // Method to asynchronously retrieve a document by its ID from the MongoDB collection
-    public async Task<T> GetAsync(string id)
+    public async Task<T> GetAsync(ObjectId id)
     {
         FilterDefinition<T> filter = _filterBuilder.Eq(entity => entity.Id, id);
         return await _collection.Find(filter).FirstOrDefaultAsync();
     }
 
     // Method to asynchronously remove a document by its ID from the MongoDB collection
-    public async Task<bool> RemoveAsync(string id)
+    public async Task<bool> RemoveAsync(ObjectId id)
     {
         FilterDefinition<T> filter = _filterBuilder.Eq(entity => entity.Id, id);
         await _collection.DeleteOneAsync(filter);

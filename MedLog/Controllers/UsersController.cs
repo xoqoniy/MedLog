@@ -1,6 +1,7 @@
 ﻿using MedLog.Service.DTOs.UserDTOs;
 using MedLog.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 using System.Reflection;
 using System.Security;
 
@@ -17,7 +18,7 @@ namespace MedLog.Controllers
 
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserResultDto>> GetAsync(string id)
+        public async Task<ActionResult<UserResultDto>> GetAsync(ObjectId id)
         {
             var user = await userService.GetAsync(id);
             return user;
@@ -31,14 +32,14 @@ namespace MedLog.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<UserResultDto>> PutAsync(string id, UserUpdateDto dto)
+        public async Task<ActionResult<UserResultDto>> PutAsync([FromRoute] ObjectId id, [FromBody] UserUpdateDto dto)
         {
-            var user = await userService.UpdateAsync(id,dto);
+            var user = await userService.UpdateAsync(id, dto);
             return user;
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<bool>> DeleteAsync(string id)
+        public async Task<ActionResult<bool>> DeleteAsync(ObjectId id)
         {
              var user = await userService.DeleteAsync(id);
              return user;
