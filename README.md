@@ -1,10 +1,8 @@
-Certainly! Here's a README file for the "E-MEDICINE.UZ" project:
-
-# E-MEDICINE.UZ - Initial Plans
+# MedLog - Initial Plans
 
 ## Project Overview
 
-E-MEDICINE.UZ is a web application aimed at streamlining medical services in Uzbekistan. The project involves the creation of a website that will serve as a platform for various healthcare-related tasks. The primary goal is to enhance the accessibility of medical services and facilitate interactions between healthcare professionals, clinics, and patients.
+MedLog.uz is a web application aimed at streamlining medical services in Uzbekistan. The project involves the creation of a website that will serve as a platform for various healthcare-related tasks. The primary goal is to enhance the accessibility of medical services and facilitate interactions between healthcare professionals, clinics, and patients.
 
 ## Key Objectives
 

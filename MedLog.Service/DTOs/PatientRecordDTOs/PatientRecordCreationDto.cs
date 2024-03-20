@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +10,6 @@ namespace MedLog.Service.DTOs.PatientRecordDTOs
     {
         public string UserId { get; set; }
         public string StaffId { get; set; }
-        public IFormFile File { get; set; }
         public string Diagnosis { get; set; }
         public string Symptoms { get; set; }
         public string Medications { get; set; }
