@@ -1,21 +1,18 @@
-﻿using MedLog.Domain.Common;
-using MedLog.Domain.Enums;
+﻿using MedLog.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MedLog.Domain.Entities
+namespace MedLog.Service.DTOs.AddressDTOs
 {
-    public class Address : Auditable
+    public class AddressCreationDto
     {
         public Region Region { get; set; }
         public string City { get; set; }
         public string Street { get; set; }
         public string Neighboorhood { get; set; }
         public int HouseNumber { get; set; }
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
     }
 }
