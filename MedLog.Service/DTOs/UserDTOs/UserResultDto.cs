@@ -1,5 +1,6 @@
 ﻿using MedLog.Domain.Entities;
 using MedLog.Domain.Enums;
+using MedLog.Service.DTOs.AddressDTOs;
 using MongoDB.Bson;
 using System.ComponentModel.DataAnnotations;
 
@@ -17,7 +18,7 @@ namespace MedLog.Service.DTOs.UserDTOs
         public int Age { get; set; }
         public Gender Gender { get; set; }
         public int BloodType { get; set; }
-        public Address Address { get; set; }
+        public AddressResultDto Address { get; set; }
 
     }
 
