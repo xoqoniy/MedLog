@@ -9,8 +9,8 @@ namespace MedLog.DAL.IRepositories;
 public interface IRepository<T> where T : Auditable
 {
     Task<List<T>> GetAllAsync();
-    Task<T> GetAsync(ObjectId id);
+    Task<T> GetAsync(string id);
     Task<T> CreateAsync(T user);
     Task UpdateAsync(T entity);
-    Task<bool> RemoveAsync(ObjectId id);
+    Task<bool> RemoveAsync(string id);
 }

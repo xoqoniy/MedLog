@@ -7,9 +7,9 @@ namespace MedLog.Domain.Common;
 
 public abstract class Auditable
 {
-    [Key]
-    [BsonId(IdGenerator = typeof(ObjectIdGenerator))]
-    public ObjectId _id { get; set; }
+    [BsonId, Key]
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string? _id { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? LastUpdatedAt { get; set; }
 

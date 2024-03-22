@@ -59,14 +59,14 @@ public class Repository<T> : IRepository<T> where T : Auditable
     }
 
     // Method to asynchronously retrieve a document by its ID from the MongoDB collection
-    public async Task<T> GetAsync(ObjectId id)
+    public async Task<T> GetAsync(string id)
     {
         FilterDefinition<T> filter = _filterBuilder.Eq(entity => entity._id, id);
         return await _collection.Find(filter).FirstOrDefaultAsync();
     }
 
     // Method to asynchronously remove a document by its ID from the MongoDB collection
-    public async Task<bool> RemoveAsync(ObjectId id)
+    public async Task<bool> RemoveAsync(string id)
     {
         FilterDefinition<T> filter = _filterBuilder.Eq(entity => entity._id, id);
         await _collection.DeleteOneAsync(filter);

@@ -28,7 +28,7 @@ namespace MedLog.Service.Services
 
         }
 
-        public async Task<bool> DeleteAsync(ObjectId id)
+        public async Task<bool> DeleteAsync(string id)
         {
             var user = await repository.GetAsync(id);
             if (user is null)
@@ -45,7 +45,7 @@ namespace MedLog.Service.Services
             return mapper.Map<List<UserResultDto>>(users);
         }
 
-        public async Task<UserResultDto> GetAsync(ObjectId id)
+        public async Task<UserResultDto> GetAsync(string id)
         {
             var user = await repository.GetAsync(id);
             if(user is null)
@@ -55,7 +55,7 @@ namespace MedLog.Service.Services
             return mapper.Map<UserResultDto>(user);
         }
 
-        public async Task<UserResultDto> UpdateAsync(ObjectId id, UserUpdateDto dto)
+        public async Task<UserResultDto> UpdateAsync(string id, UserUpdateDto dto)
         {
             var user = await repository.GetAsync(id);
 

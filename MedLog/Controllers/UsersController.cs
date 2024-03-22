@@ -18,7 +18,7 @@ namespace MedLog.Controllers
 
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserResultDto>> GetAsync(ObjectId id)
+        public async Task<ActionResult<UserResultDto>> GetAsync(string id)
         {
             var user = await userService.GetAsync(id);
             return user;
@@ -32,14 +32,14 @@ namespace MedLog.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<UserResultDto>> PutAsync([FromRoute] ObjectId id, [FromBody] UserUpdateDto dto)
+        public async Task<ActionResult<UserResultDto>> PutAsync([FromRoute] string id, [FromBody] UserUpdateDto dto)
         {
             var user = await userService.UpdateAsync(id, dto);
             return user;
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<bool>> DeleteAsync(ObjectId id)
+        public async Task<ActionResult<bool>> DeleteAsync(string id)
         {
              var user = await userService.DeleteAsync(id);
              return user;

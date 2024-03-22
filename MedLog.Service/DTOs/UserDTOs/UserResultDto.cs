@@ -11,7 +11,7 @@ namespace MedLog.Service.DTOs.UserDTOs
 {
     public class UserResultDto
     { 
-        public ObjectId _id { get; set; }
+        public string? _id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string PhoneNumber { get; set; }
