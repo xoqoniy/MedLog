@@ -61,14 +61,14 @@ public class Repository<T> : IRepository<T> where T : Auditable
     // Method to asynchronously retrieve a document by its ID from the MongoDB collection
     public async Task<T> GetAsync(ObjectId id)
     {
-        FilterDefinition<T> filter = _filterBuilder.Eq(entity => entity.Id, id);
+        FilterDefinition<T> filter = _filterBuilder.Eq(entity => entity._id, id);
         return await _collection.Find(filter).FirstOrDefaultAsync();
     }
 
     // Method to asynchronously remove a document by its ID from the MongoDB collection
     public async Task<bool> RemoveAsync(ObjectId id)
     {
-        FilterDefinition<T> filter = _filterBuilder.Eq(entity => entity.Id, id);
+        FilterDefinition<T> filter = _filterBuilder.Eq(entity => entity._id, id);
         await _collection.DeleteOneAsync(filter);
         return true;
     }
@@ -82,7 +82,7 @@ public class Repository<T> : IRepository<T> where T : Auditable
         }
 
         // Create a filter for the existing document based on its ID
-        FilterDefinition<T> filter = Builders<T>.Filter.Eq(existingentity => existingentity.Id, entity.Id);
+        FilterDefinition<T> filter = Builders<T>.Filter.Eq(existingentity => existingentity._id, entity._id);
 
         // Replace the existing document with the updated entity
         await _collection.ReplaceOneAsync(filter, entity);

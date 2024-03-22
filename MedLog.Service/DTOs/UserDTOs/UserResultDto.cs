@@ -2,6 +2,7 @@
 using MedLog.Domain.Enums;
 using MedLog.Service.DTOs.AddressDTOs;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using System.ComponentModel.DataAnnotations;
 
 
@@ -9,8 +10,8 @@ using System.ComponentModel.DataAnnotations;
 namespace MedLog.Service.DTOs.UserDTOs
 {
     public class UserResultDto
-    {
-        public ObjectId Id { get; set; }
+    { 
+        public ObjectId _id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string PhoneNumber { get; set; }
