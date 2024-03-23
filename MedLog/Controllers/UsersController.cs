@@ -3,6 +3,7 @@ using MedLog.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using System.Reflection;
+using System.Runtime.Serialization;
 using System.Security;
 
 namespace MedLog.Controllers
@@ -27,6 +28,7 @@ namespace MedLog.Controllers
         [HttpPost]
         public async Task<ActionResult<UserResultDto>> PostAsync(UserCreationDto dto)
         {
+            dto.Address._id = ObjectId.GenerateNewId().ToString();
             var user = await userService.CreateAsync(dto);
             return user;
         }
