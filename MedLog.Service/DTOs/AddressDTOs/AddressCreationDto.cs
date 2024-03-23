@@ -9,6 +9,7 @@ namespace MedLog.Service.DTOs.AddressDTOs
 {
     public class AddressCreationDto
     {
+        public string? _id { get; set; }
         public Region Region { get; set; }
         public string City { get; set; }
         public string Street { get; set; }

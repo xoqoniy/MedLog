@@ -13,6 +13,7 @@ namespace MedLog.Domain.Entities
 {
     public class Address : Auditable
     {
+        
         public Region Region { get; set; }
         public string City { get; set; }
         public string Street { get; set; }
