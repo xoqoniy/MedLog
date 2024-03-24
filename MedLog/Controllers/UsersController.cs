@@ -28,7 +28,6 @@ namespace MedLog.Controllers
         [HttpPost]
         public async Task<ActionResult<UserResultDto>> PostAsync(UserCreationDto dto)
         {
-            dto.Address._id = ObjectId.GenerateNewId().ToString();
             var user = await userService.CreateAsync(dto);
             return user;
         }
