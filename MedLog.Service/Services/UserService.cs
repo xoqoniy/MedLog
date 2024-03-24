@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using MedLog.DAL.IRepositories;
 using MedLog.Domain.Entities;
+using MedLog.Service.DTOs.AddressDTOs;
 using MedLog.Service.DTOs.UserDTOs;
 using MedLog.Service.Exceptions;
 using MedLog.Service.Interfaces;
@@ -21,11 +22,21 @@ namespace MedLog.Service.Services
 
         public async Task<UserResultDto> CreateAsync(UserCreationDto user)
         {
+            //Generate ID for the address(embedded class on User entity)
+            string addressId = ObjectId.GenerateNewId().ToString();
+
+            //Map the UserCreationDto to User 
             var mapped = mapper.Map<User>(user);
             mapped.CreatedAt = DateTime.UtcNow;
-            await repository.CreateAsync(mapped);
-            return mapper.Map<UserResultDto>(mapped);
 
+            //Assign the generated Id to the Address entity
+            mapped.Address._id = addressId;
+
+            //Save the User with the mapped Address
+            await repository.CreateAsync(mapped);
+
+            //Return the mapped UserResultDto
+            return mapper.Map<UserResultDto>(mapped);
         }
 
         public async Task<bool> DeleteAsync(string id)
