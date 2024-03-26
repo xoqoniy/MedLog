@@ -2,6 +2,7 @@
 
 using MedLog.Domain.Entities;
 using MedLog.Domain.Enums;
+using MongoDB.Bson.Serialization.Attributes;
 using System.ComponentModel.DataAnnotations;
 
 #pragma warning disable
@@ -9,7 +10,7 @@ namespace MedLog.Service.DTOs.UserDTOs;
 
 public class UserUpdateDto
 {
-    
+
     [Required(ErrorMessage = "Ismni to'ldirish kerak")]
     public string FirstName { get; set; }
 
@@ -22,5 +23,4 @@ public class UserUpdateDto
     public int Age { get; set; }
     public Gender Gender { get; set; }
     public int BloodType { get; set; }
-    public Address Address { get; set; }
 }

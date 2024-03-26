@@ -74,18 +74,25 @@ public class Repository<T> : IRepository<T> where T : Auditable
     }
 
     // Method to asynchronously update a document in the MongoDB collection
+    // Method to asynchronously update a document in the MongoDB collection
     public async Task UpdateAsync(T entity)
     {
-        if (entity is null)
-        {
-            throw new ArgumentNullException(nameof(entity));
-        }
+        // Extract the ID property from the entity
+        var idProperty = entity.GetType().GetProperty("_id");
+        if (idProperty == null)
+            throw new ArgumentException("Entity does not contain an _id property.");
 
-        // Create a filter for the existing document based on its ID
-        FilterDefinition<T> filter = Builders<T>.Filter.Eq(existingentity => existingentity._id, entity._id);
+        var idValue = idProperty.GetValue(entity);
+        if (idValue == null)
+            throw new ArgumentException("Entity's _id property value is null.");
 
-        // Replace the existing document with the updated entity
+        // Create a filter to find the entity by its ID
+        FilterDefinition<T> filter = _filterBuilder.Eq("_id", idValue);
+
+        // Replace the entity in the collection
         await _collection.ReplaceOneAsync(filter, entity);
+
     }
+
 }
 

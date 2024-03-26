@@ -59,36 +59,30 @@ namespace MedLog.Service.Services
         public async Task<UserResultDto> GetAsync(string id)
         {
             var user = await repository.GetAsync(id);
-            if(user is null)
-            {
-                throw new MedLogException(404, "User not found");
-            }
-            return mapper.Map<UserResultDto>(user);
-        }
-
-        public async Task<UserResultDto> UpdateAsync(string id, UserUpdateDto dto)
-        {
-            var user = await repository.GetAsync(id);
-
             if (user is null)
             {
                 throw new MedLogException(404, "User not found");
             }
-
-            // Map the properties from the update DTO to the existing user
-            mapper.Map(dto, user);
-
-            // Update additional properties if needed
-
-            user.LastUpdatedAt = DateTime.UtcNow;
-
-            // Perform server-side validation if needed
-
-            // Update the user
-            await repository.UpdateAsync(user);
-
-            // Return the updated user DTO
             return mapper.Map<UserResultDto>(user);
         }
+
+
+
+        public async Task<UserResultDto> UpdateAsync(string _id)
+        {
+            var userToUpdate = await repository.GetAsync(_id);
+            UserUpdateDto dto = new UserUpdateDto();
+            userToUpdate.FirstName = dto.FirstName;
+            userToUpdate.LastName = dto.LastName;
+            userToUpdate.PhoneNumber = dto.PhoneNumber;
+            userToUpdate.Age = dto.Age;
+            userToUpdate.BloodType = dto.BloodType;
+            userToUpdate.Gender = dto.Gender;
+            userToUpdate.LastUpdatedAt = DateTime.UtcNow;
+
+            await repository.UpdateAsync(userToUpdate);
+            return mapper.Map<UserResultDto>(userToUpdate);
+        }
+
     }
 }

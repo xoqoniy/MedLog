@@ -1,10 +1,14 @@
-﻿using MedLog.Service.DTOs.UserDTOs;
+﻿using MedLog.Domain.Entities;
+using MedLog.Service.DTOs.UserDTOs;
 using MedLog.Service.Interfaces;
+using MedLog.Service.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Security;
+using ZstdSharp.Unsafe;
 
 namespace MedLog.Controllers
 {
@@ -32,12 +36,14 @@ namespace MedLog.Controllers
             return user;
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult<UserResultDto>> PutAsync([FromRoute] string id, [FromBody] UserUpdateDto dto)
+        [HttpPut("{_id}")]
+        public async Task<IActionResult> UpdateUser(string _id)
         {
-            var user = await userService.UpdateAsync(id, dto);
-            return user;
+            var user = await userService.UpdateAsync(_id);
+            return Ok(user);
         }
+
+
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<bool>> DeleteAsync(string id)
