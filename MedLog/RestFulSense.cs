@@ -3,7 +3,7 @@
 namespace MedLog
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("data/[controller]")]
     public abstract class RestFulSense : ControllerBase
     {   }
 }   
