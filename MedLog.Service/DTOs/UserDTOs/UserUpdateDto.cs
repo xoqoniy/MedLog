@@ -22,5 +22,4 @@ public class UserUpdateDto
     public int Age { get; set; }
     public Gender Gender { get; set; }
     public int BloodType { get; set; }
-    public Address Address { get; set; }
 }
