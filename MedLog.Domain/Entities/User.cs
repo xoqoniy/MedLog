@@ -27,6 +27,9 @@ namespace MedLog.Domain.Entities
 
         // HospitalId to associate user with hospital
         public string HospitalId { get; set; }
+
+        // Additional property to hold available hospitals for user selection
+        public List<Hospital> AvailableHospitals { get; set; }
     }
 }
  

@@ -1,6 +1,7 @@
 ﻿using MedLog.Domain.Entities;
 using MedLog.Domain.Enums;
 using MedLog.Service.DTOs.AddressDTOs;
+using MedLog.Service.DTOs.HospitalDTOs;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using System.ComponentModel.DataAnnotations;
@@ -20,6 +21,8 @@ namespace MedLog.Service.DTOs.UserDTOs
         public Gender Gender { get; set; }
         public int BloodType { get; set; }
         public AddressResultDto Address { get; set; }
+        public string HospitalId {  get; set; }
+        public List<HospitalResultDto> AvailableHospitals { get; set; }
 
     }
 
