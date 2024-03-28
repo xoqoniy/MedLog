@@ -2,10 +2,10 @@
 using MedLog.Domain.Common;
 using MedLog.DAL.IRepositories;
 using MedLog.Domain.Entities;
-
 using MedLog.DAL.DbContexts;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
+using System.Linq.Expressions;
 
 namespace MedLog.DAL.Repositories;
 
@@ -40,33 +40,34 @@ public class Repository<T> : IRepository<T> where T : Auditable
         return typeof(T) switch
         {
             Type t when t == typeof(User) => mongodbSettings.Value.UsersCollection,
+            Type t when t == typeof(Hospital) => mongodbSettings.Value.HospitalsCollection,
             // Add more cases for other entities as needed
             _ => throw new NotSupportedException($"Unsupported entity type: {typeof(T)}"),
         };
     }
 
     // Method to asynchronously create a new document in the MongoDB collection
-    public async Task<T> CreateAsync(T entity)
+    public async Task<T> InsertAsync(T entity)
     {
         await _collection.InsertOneAsync(entity);
         return entity;
     }
 
     // Method to asynchronously retrieve all documents from the MongoDB collection
-    public async Task<List<T>> GetAllAsync()
+    public async Task<List<T>> RetrieveAllAsync()
     {
         return await _collection.Find(_filterBuilder.Empty).ToListAsync();
     }
 
     // Method to asynchronously retrieve a document by its ID from the MongoDB collection
-    public async Task<T> GetAsync(string id)
+    public async Task<T> RetrieveByIdAsync(string id)
     {
         FilterDefinition<T> filter = _filterBuilder.Eq(entity => entity._id, id);
         return await _collection.Find(filter).FirstOrDefaultAsync();
     }
 
     // Method to asynchronously remove a document by its ID from the MongoDB collection
-    public async Task<bool> RemoveAsync(string id)
+    public async Task<bool> RemoveByIdAsync(string id)
     {
         FilterDefinition<T> filter = _filterBuilder.Eq(entity => entity._id, id);
         await _collection.DeleteOneAsync(filter);
@@ -74,18 +75,20 @@ public class Repository<T> : IRepository<T> where T : Auditable
     }
 
     // Method to asynchronously update a document in the MongoDB collection
-    public async Task UpdateAsync(T entity)
+    public async Task ReplaceByIdAsync(T entity)
     {
-        if (entity is null)
-        {
-            throw new ArgumentNullException(nameof(entity));
-        }
-
         // Create a filter for the existing document based on its ID
         FilterDefinition<T> filter = Builders<T>.Filter.Eq(existingentity => existingentity._id, entity._id);
 
         // Replace the existing document with the updated entity
         await _collection.ReplaceOneAsync(filter, entity);
     }
+
+    //Method to retrieve entities based on a provided expression
+    public async Task<List<T>> RetrieveByExpressionAsync(Expression<Func<T, bool>> expression)
+    {
+        return await _collection.Find(expression).ToListAsync();
+    }
+
 }
 
