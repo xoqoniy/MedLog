@@ -3,8 +3,10 @@ using AutoMapper;
 using MedLog.DAL.IRepositories;
 using MedLog.Domain.Entities;
 using MedLog.Service.DTOs.HospitalDTOs;
+using MedLog.Service.Exceptions;
 using MedLog.Service.Interfaces;
 using MongoDB.Bson;
+using SharpCompress.Archives;
 
 namespace MedLog.Service.Services;
 
@@ -35,28 +37,71 @@ public class HospitalService : IHospitalService
         }  
     }
 
-    public Task<bool> DeleteByIdAsync(string id)
+    public async Task<bool> DeleteByIdAsync(string id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            await repository.RemoveByIdAsync(id);
+            return true;
+        }
+        catch(Exception ex)
+        {
+            throw new MedLogException(404, ex.Message);
+        }
     }
 
-    public Task<List<HospitalResultDto>> GetAllAsync()
+    public async Task<List<HospitalResultDto>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        try
+        {
+            var hospitals = await repository.RetrieveAllAsync();
+            return mapper.Map<List<HospitalResultDto>>(hospitals);
+        }
+        catch(MedLogException ex) 
+        {
+            throw new MedLogException(404, ex.Message);
+        }
     }
 
-    public Task<HospitalResultDto> GetByIdAsync(string id)
+    public async Task<HospitalResultDto> GetByIdAsync(string id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var hospital = await repository.RetrieveByIdAsync(id);
+            return mapper.Map<HospitalResultDto>(hospital);
+        }
+        catch(MedLogException ex)
+        {
+            throw new MedLogException(404, ex.Message);
+        }
     }
 
-    public Task<List<HospitalResultDto>> GetHospitalsInCity(string city)
+    public async Task<List<HospitalResultDto>> GetHospitalsInCity(string city)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var hospitals = await repository.RetrieveByExpressionAsync(h => h.Address.City == city);
+            return mapper.Map<List<HospitalResultDto>>(hospitals);
+        }
+        catch( MedLogException ex)
+        {
+            throw new MedLogException(404, ex.Message);
+        }
     }
 
-    public Task<HospitalResultDto> UpdateAsync(HospitalUpdateDto dto)
+    public async Task<HospitalResultDto> UpdateAsync(string id, HospitalUpdateDto dto)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var hospital = await repository.RetrieveByIdAsync(id);
+            mapper.Map(dto, hospital);
+            hospital.LastUpdatedAt = DateTime.UtcNow;
+            await repository.ReplaceByIdAsync(hospital);
+            return mapper.Map<HospitalResultDto>(hospital);
+        }
+        catch( MedLogException ex)
+        {
+            throw new MedLogException(404, ex.Message);
+        }
     }
 }

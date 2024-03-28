@@ -20,5 +20,35 @@ namespace MedLog.Controllers
             var hospital = await service.CreateAsync(dto);
             return hospital;
         }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<HospitalResultDto>> GetByIdAsync (string id)
+        {
+            var hospital = await service.GetByIdAsync(id);
+            return hospital;
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<bool>> DeleteByIdAsync(string id)
+        {
+            var hospital = await service.DeleteByIdAsync(id);
+            return true;
+        }
+
+        [HttpPut("{id}")] 
+        public async Task<ActionResult<HospitalResultDto>> UpdateByIdAsync([FromRoute] string id, [FromBody] HospitalUpdateDto dto)
+        {
+            var hospital = await service.UpdateAsync(id, dto);
+            return hospital;
+        }
+
+        //Get/hospitals
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<HospitalResultDto>>> GetAllAsync()
+        {
+            return await service.GetAllAsync();
+        }
+
+
     }
 }
