@@ -1,4 +1,5 @@
-﻿using MedLog.Service.DTOs.UserDTOs;
+﻿using MedLog.Service.DTOs.HospitalDTOs;
+using MedLog.Service.DTOs.UserDTOs;
 using MongoDB.Bson;
 
 namespace MedLog.Service.Interfaces;

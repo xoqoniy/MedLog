@@ -50,8 +50,7 @@ namespace MedLog.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserResultDto>>> GetAllAsync()
         {
-            var users = await userService.GetAllAsync();
-            return users;
+            return await userService.GetAllAsync();
         }
     }
 }

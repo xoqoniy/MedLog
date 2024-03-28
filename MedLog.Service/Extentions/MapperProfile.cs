@@ -3,6 +3,7 @@
 using AutoMapper;
 using MedLog.Domain.Entities;
 using MedLog.Service.DTOs.AddressDTOs;
+using MedLog.Service.DTOs.HospitalDTOs;
 using MedLog.Service.DTOs.UserDTOs;
 
 namespace MedLog.Service.Extentions;
@@ -18,5 +19,9 @@ public class MapperProfile : Profile
         CreateMap<Address, AddressCreationDto>().ReverseMap();
         CreateMap<Address, AddressUpdateDto>().ReverseMap();
         CreateMap<Address, AddressResultDto>().ReverseMap();
+
+        CreateMap<Hospital, HospitalCreationDto>().ReverseMap();
+        CreateMap<Hospital, HospitalUpdateDto>().ReverseMap();
+        CreateMap<Hospital, HospitalResultDto>().ReverseMap();
     }
 }

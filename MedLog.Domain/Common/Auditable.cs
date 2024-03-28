@@ -9,7 +9,7 @@ public abstract class Auditable
 {
     [BsonId, Key]
     [BsonRepresentation(BsonType.ObjectId)]
-    public string _id { get; set; }
+    public string? _id { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? LastUpdatedAt { get; set; }
 

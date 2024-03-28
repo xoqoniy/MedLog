@@ -9,4 +9,5 @@ public class MongoDbSettings
     public string DatabaseName { get; init; }
 
     public string UsersCollection { get; set; }
+    public string HospitalsCollection { get; set; }
 }
