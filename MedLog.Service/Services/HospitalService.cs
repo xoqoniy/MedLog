@@ -7,6 +7,7 @@ using MedLog.Service.Exceptions;
 using MedLog.Service.Interfaces;
 using MongoDB.Bson;
 using SharpCompress.Archives;
+using System.Linq.Expressions;
 
 namespace MedLog.Service.Services;
 
@@ -80,7 +81,12 @@ public class HospitalService : IHospitalService
     {
         try
         {
-            var hospitals = await repository.RetrieveByExpressionAsync(h => h.Address.City == city);
+            // Define the expression to filter hospitals by city (case-insensitive)
+            Expression<Func<Hospital, bool>> expression = h => h.Address.City.ToLower() == city.ToLower();
+
+            // Retrieve hospitals using the generic repository method
+            var hospitals = await repository.RetrieveByExpressionAsync(expression);
+
             return mapper.Map<List<HospitalResultDto>>(hospitals);
         }
         catch( MedLogException ex)

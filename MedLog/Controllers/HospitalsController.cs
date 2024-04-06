@@ -49,6 +49,12 @@ namespace MedLog.Controllers
             return await service.GetAllAsync();
         }
 
+        [HttpGet("city/{city}")]
+        public async Task<ActionResult<IEnumerable<HospitalResultDto>>> GetHospitalsInCity(string city)
+        {
+            var hospitals =  await service.GetHospitalsInCity(city);
+            return Ok(hospitals);
+        }
 
     }
 }
