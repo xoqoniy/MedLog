@@ -77,7 +77,7 @@ public class HospitalService : IHospitalService
         }
     }
 
-    public async Task<List<HospitalResultDto>> GetHospitalsInCity(string city)
+    public async Task<List<string>> GetHospitalsInCity(string city)
     {
         try
         {
@@ -87,13 +87,17 @@ public class HospitalService : IHospitalService
             // Retrieve hospitals using the generic repository method
             var hospitals = await repository.RetrieveByExpressionAsync(expression);
 
-            return mapper.Map<List<HospitalResultDto>>(hospitals);
+            // Map hospitals' names to a list of strings
+            var hospitalNames = hospitals.Select(h => h.Name).ToList();
+
+            return hospitalNames;
         }
-        catch( MedLogException ex)
+        catch (MedLogException ex)
         {
             throw new MedLogException(404, ex.Message);
         }
     }
+
 
     public async Task<HospitalResultDto> UpdateAsync(string id, HospitalUpdateDto dto)
     {
