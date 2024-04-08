@@ -10,7 +10,7 @@ public interface IHospitalService
     Task<HospitalResultDto> GetByIdAsync (string id);
     Task<bool> DeleteByIdAsync (string id);
     Task<List<HospitalResultDto>> GetAllAsync();
-    Task<List<HospitalResultDto>> GetHospitalsInCity(string city);
+    Task<List<string>> GetHospitalsInCity(string city);
 
 
 }

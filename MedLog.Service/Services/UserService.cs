@@ -13,39 +13,65 @@ namespace MedLog.Service.Services;
 public class UserService : IUserService
 {
     private readonly IRepository<User> repository;
+    private readonly IHospitalService hospitalService;
     private readonly IMapper mapper;
 
-    public UserService(IRepository<User> repository, IMapper mapper)
+    public UserService(IRepository<User> repository, IMapper mapper, IHospitalService hospitalService)
     {
         this.repository = repository;
         this.mapper = mapper;
+        this.hospitalService = hospitalService;
     }
 
-    public async Task<UserResultDto> CreateAsync(UserCreationDto user)
+    public async Task<UserResultDto> CreateAsync(UserCreationDto userDto)
     {
-        //Generate ID for the address(embedded class on User entity)
-        string addressId = ObjectId.GenerateNewId().ToString();
+        try
+        {
+            // Generate an ObjectId for the address
+            string addressId = ObjectId.GenerateNewId().ToString();
 
-        //Map the UserCreationDto to User 
-        var mapped = mapper.Map<User>(user);
+            // Map the UserCreationDto to User entity
+            var newUser = mapper.Map<User>(userDto);
 
-        //Assign the generated Id to the Address entity
-        mapped.Address._id = addressId;
+            // Assign the generated address ID to the user's address
+            newUser.Address._id = addressId;
 
-        //Save the User with the mapped Address
-        await repository.InsertAsync(mapped);
+            // Retrieve hospitals in the user's city
+            var hospitalsInCity = await hospitalService.GetHospitalsInCity(newUser.Address.City);
 
-        //Return the mapped UserResultDto
-        return mapper.Map<UserResultDto>(mapped);
+            // Map hospitals to HospitalResultDto for frontend selection
+            var hospitalsDto = mapper.Map<List<HospitalResultDto>>(hospitalsInCity);
+
+            // Convert HospitalResultDto list back to Hospital entities
+            var hospitals = mapper.Map<List<Hospital>>(hospitalsInCity);
+
+            // Assign the list of hospitals to the user's AvailableHospitals
+            newUser.AvailableHospitals = hospitals;
+
+            // Save the user to the repository
+            await repository.InsertAsync(newUser);
+
+            // Map the created user to UserResultDto
+            var userResultDto = mapper.Map<UserResultDto>(newUser);
+            userResultDto.AvailableHospitals = hospitalsDto;
+
+            return userResultDto;
+        }
+        catch (Exception ex)
+        {
+            // Handle any exceptions
+            throw new Exception("Failed to create user.", ex);
+        }
     }
+
+
 
     public async Task<bool> DeleteAsync(string id)
     {
         var user = await repository.RetrieveByIdAsync(id);
-        if (user is null)
-        {
+        if(user is null)
             throw new MedLogException(404, "User not found");
-        }
+        
         await repository.RemoveByIdAsync(id);
         return true;
     }
@@ -60,9 +86,8 @@ public class UserService : IUserService
     {
         var user = await repository.RetrieveByIdAsync(id);
         if(user is null)
-        {
             throw new MedLogException(404, "User not found");
-        }
+        
         return mapper.Map<UserResultDto>(user);
     }
 
@@ -75,10 +100,9 @@ public class UserService : IUserService
     {
         var user = await repository.RetrieveByIdAsync(id);
 
-        if (user is null)
-        {
+        if(user is null)
             throw new MedLogException(404, "User not found");
-        }
+        
 
         // Map the properties from the update DTO to the existing user
         mapper.Map(dto, user);
