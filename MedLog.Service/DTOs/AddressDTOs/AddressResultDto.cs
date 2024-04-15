@@ -4,7 +4,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace MedLog.Service.DTOs.AddressDTOs;
-
+#pragma warning disable
 public class AddressResultDto
 {
     public string? _id { get; set; }

@@ -22,7 +22,7 @@ namespace MedLog.Service.DTOs.UserDTOs
         public int BloodType { get; set; }
         public AddressResultDto Address { get; set; }
         public string HospitalId {  get; set; }
-        public List<HospitalResultDto> AvailableHospitals { get; set; }
+        public List<string> AvailableHospitals { get; set; }
 
     }
 

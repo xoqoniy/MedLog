@@ -20,6 +20,13 @@ public class MapperProfile : Profile
         CreateMap<Address, AddressUpdateDto>().ReverseMap();
         CreateMap<Address, AddressResultDto>().ReverseMap();
 
+
+        CreateMap<HospitalResultDto, HospitalUpdateDto>()
+           .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
+           .ForMember(dest => dest.UserIds, opt => opt.Ignore()); // Ignore the UserIds property
+
+
+        CreateMap<AddressResultDto, AddressUpdateDto>();
         CreateMap<Hospital, HospitalCreationDto>().ReverseMap();
         CreateMap<Hospital, HospitalUpdateDto>().ReverseMap();
         CreateMap<Hospital, HospitalResultDto>().ReverseMap();

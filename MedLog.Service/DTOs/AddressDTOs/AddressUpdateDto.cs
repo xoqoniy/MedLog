@@ -1,5 +1,5 @@
 ﻿using MedLog.Domain.Enums;
-
+#pragma warning disable
 
 namespace MedLog.Service.DTOs.AddressDTOs;
 
