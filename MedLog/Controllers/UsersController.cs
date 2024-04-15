@@ -8,7 +8,7 @@ using System.Security;
 
 namespace MedLog.Controllers
 {
-  
+
     public class UsersController : RestFulSense
     {
         private readonly IUserService userService;
@@ -26,10 +26,10 @@ namespace MedLog.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<UserResultDto>> PostAsync(UserCreationDto dto)
+        public async Task<ActionResult<UserResultDto>> PostAsync(string selectedHospitalId, [FromBody] UserCreationDto dto)
         {
-            var user = await userService.CreateAsync(dto);
-            return user;
+            var user = await userService.CreateAsync(dto, selectedHospitalId);
+            return Ok(user);
         }
 
         [HttpPut("{id}")]
