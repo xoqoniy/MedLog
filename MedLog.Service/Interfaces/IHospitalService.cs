@@ -11,6 +11,7 @@ public interface IHospitalService
     Task<bool> DeleteByIdAsync (string id);
     Task<List<HospitalResultDto>> GetAllAsync();
     Task<List<string>> GetHospitalsInCity(string city);
+    Task AddUserIdToHospital(string hospitalId, string newUserId);
 
 
 }

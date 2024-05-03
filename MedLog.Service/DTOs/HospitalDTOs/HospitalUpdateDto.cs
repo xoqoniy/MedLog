@@ -13,7 +13,5 @@ public class HospitalUpdateDto
     public int ZipCode { get; set; }
     public string PhoneNumber { get; set; }
 
-    [JsonIgnore]
-    public List<string> UserIds { get; set; }
 
 }

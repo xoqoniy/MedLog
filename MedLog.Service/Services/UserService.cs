@@ -42,23 +42,13 @@ public class UserService : IUserService
 
             // Save the User to obtain its ID
             await repository.InsertAsync(newUser);
-
+            
             // Retrieve the hospital entity by its ID
-            var hospital = await hospitalService.GetByIdAsync(selectedHospitalId);
-
-            if (hospital != null)
-            {
-                // Add the user's ID to the hospital's UserIds collection
-                hospital.UserIds.TryAdd(newUser._id);
-
-                // Update the hospital entity in the repository
-                await hospitalService.UpdateAsync(hospital._id, mapper.Map<HospitalUpdateDto>(hospital));
-            }
+            await hospitalService.AddUserIdToHospital(selectedHospitalId, newUser._id);
 
             // Map the created user to UserResultDto
-            var userResultDto = mapper.Map<UserResultDto>(newUser);
+            return mapper.Map<UserResultDto>(newUser);
 
-            return userResultDto;
         }
         catch (Exception ex)
         {

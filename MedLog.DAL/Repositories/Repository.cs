@@ -84,6 +84,16 @@ public class Repository<T> : IRepository<T> where T : Auditable
         await _collection.ReplaceOneAsync(filter, entity);
     }
 
+    // Method to asynchronously perform a partial update on a document in the MongoDB collection
+    public async Task PartialUpdateAsync(string id, UpdateDefinition<T> updateDefinition)
+    {
+        // Create a filter for the document based on its ID
+        FilterDefinition<T> filter = Builders<T>.Filter.Eq(entity => entity._id, id);
+
+        // Perform the partial update using the provided update definition
+        await _collection.UpdateOneAsync(filter, updateDefinition);
+
+    }
     //Method to retrieve entities based on a provided expression
     public async Task<List<T>> RetrieveByExpressionAsync(Expression<Func<T, bool>> expression)
     {
