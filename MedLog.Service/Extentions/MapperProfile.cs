@@ -22,8 +22,7 @@ public class MapperProfile : Profile
 
 
         CreateMap<HospitalResultDto, HospitalUpdateDto>()
-           .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
-           .ForMember(dest => dest.UserIds, opt => opt.Ignore()); // Ignore the UserIds property
+           .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address));
 
 
         CreateMap<AddressResultDto, AddressUpdateDto>();

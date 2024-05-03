@@ -6,6 +6,7 @@ using MedLog.Service.DTOs.HospitalDTOs;
 using MedLog.Service.Exceptions;
 using MedLog.Service.Interfaces;
 using MongoDB.Bson;
+using MongoDB.Driver;
 using SharpCompress.Archives;
 using System.Linq.Expressions;
 
@@ -36,6 +37,37 @@ public class HospitalService : IHospitalService
         {
             throw new Exception(ex.Message);
         }  
+    }
+    public async Task AddUserIdToHospital(string hospitalId, string newUserId)
+    {
+        try
+        {
+            // Retrieve the hospital entity by its ID
+            var hospital = await repository.RetrieveByIdAsync(hospitalId);
+
+            if (hospital != null)
+            {
+                // Add the new user ID to the existing collection
+                hospital.UserIds.Add(newUserId);
+
+                // Create an update definition to set the modified UserIds field
+                var updateDefinition = Builders<Hospital>.Update
+                    .Set(h => h.UserIds, hospital.UserIds);
+
+                // Perform the partial update using the PartialUpdateAsync method
+                await repository.PartialUpdateAsync(hospitalId, updateDefinition);
+            }
+            else
+            {
+                // Handle the case where the hospital entity is not found
+                throw new Exception($"Hospital with ID '{hospitalId}' not found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle any exceptions
+            throw new Exception($"Failed to add user ID to hospital: {ex.Message}");
+        }
     }
 
     public async Task<bool> DeleteByIdAsync(string id)
