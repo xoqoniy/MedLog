@@ -41,6 +41,7 @@ public class Repository<T> : IRepository<T> where T : Auditable
         {
             Type t when t == typeof(User) => mongodbSettings.Value.UsersCollection,
             Type t when t == typeof(Hospital) => mongodbSettings.Value.HospitalsCollection,
+            Type t when t == typeof(Appointment) => mongodbSettings.Value.AppointmentsCollection,
             // Add more cases for other entities as needed
             _ => throw new NotSupportedException($"Unsupported entity type: {typeof(T)}"),
         };
