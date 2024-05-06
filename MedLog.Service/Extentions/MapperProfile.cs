@@ -3,6 +3,8 @@
 using AutoMapper;
 using MedLog.Domain.Entities;
 using MedLog.Service.DTOs.AddressDTOs;
+using MedLog.Service.DTOs.AppointmentDTOs;
+using MedLog.Service.DTOs.DoctorDTOs;
 using MedLog.Service.DTOs.HospitalDTOs;
 using MedLog.Service.DTOs.UserDTOs;
 
@@ -12,22 +14,31 @@ public class MapperProfile : Profile
 {
 	public MapperProfile()
 	{
+        //User Mapping
 		CreateMap<User, UserCreationDto>().ReverseMap();
         CreateMap<User, UserUpdateDto>().ReverseMap();
         CreateMap<User, UserResultDto>().ReverseMap();
+        CreateMap<User, DoctorDto>().ReverseMap();
 
+
+        //Address Mapping
         CreateMap<Address, AddressCreationDto>().ReverseMap();
         CreateMap<Address, AddressUpdateDto>().ReverseMap();
         CreateMap<Address, AddressResultDto>().ReverseMap();
+        CreateMap<AddressResultDto, AddressUpdateDto>();
 
-
+        
+        //Hospital Mapping
         CreateMap<HospitalResultDto, HospitalUpdateDto>()
            .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address));
 
-
-        CreateMap<AddressResultDto, AddressUpdateDto>();
         CreateMap<Hospital, HospitalCreationDto>().ReverseMap();
         CreateMap<Hospital, HospitalUpdateDto>().ReverseMap();
         CreateMap<Hospital, HospitalResultDto>().ReverseMap();
+
+        //Appointment Mapping
+        CreateMap<Appointment, AppointmentCreationDto>().ReverseMap();
+        CreateMap<Appointment, AppointmentUpdateDto>().ReverseMap();
+        CreateMap<Appointment, AppointmentResultDto>().ReverseMap();
     }
 }
