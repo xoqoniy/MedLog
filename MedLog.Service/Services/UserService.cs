@@ -3,22 +3,26 @@ using AutoMapper.Internal;
 using MedLog.DAL.IRepositories;
 using MedLog.Domain.Entities;
 using MedLog.Service.DTOs.AddressDTOs;
+using MedLog.Service.DTOs.DoctorDTOs;
 using MedLog.Service.DTOs.HospitalDTOs;
 using MedLog.Service.DTOs.UserDTOs;
 using MedLog.Service.Exceptions;
 using MedLog.Service.Interfaces;
 using MongoDB.Bson;
+using System.Text.Json;
 
 namespace MedLog.Service.Services;
 
 public class UserService : IUserService
 {
     private readonly IRepository<User> repository;
+    private readonly IRepository<Appointment> appointmentrepo;
     private readonly IHospitalService hospitalService;
     private readonly IMapper mapper;
 
-    public UserService(IRepository<User> repository, IMapper mapper, IHospitalService hospitalService)
+    public UserService(IRepository<User> repository, IRepository<Appointment> appointmentrepo, IMapper mapper, IHospitalService hospitalService)
     {
+        this.appointmentrepo = appointmentrepo;
         this.repository = repository;
         this.mapper = mapper;
         this.hospitalService = hospitalService;
@@ -82,10 +86,26 @@ public class UserService : IUserService
         return mapper.Map<UserResultDto>(user);
     }
 
-    //public Task<List<HospitalResultDto>> GetHospitalsInCity(string city)
-    //{
-    //    return await _hospitalRepository.GetAsync(h => h.Address.City == city);
-    //}
+    public async Task<List<DoctorDto>> GetDoctorsByHospitalId(string hospitalId)
+    {
+        try
+        {
+            var doctors = await repository.RetrieveByExpressionAsync(u =>
+                u.UserRole == Domain.Enums.Role.Doctor && u.Specialization != null && u.HospitalId == hospitalId);
+
+            var doctorDtos = mapper.Map<List<DoctorDto>>(doctors.Select(d => new DoctorDto
+            {
+                Id = d._id,
+                FullName = $"{d.FirstName} {d.LastName}",
+                Specialization = d.Specialization
+            }));
+            return doctorDtos;
+        }
+        catch(Exception ex)
+        {
+            throw new MedLogException(402, ex.Message);
+        }
+    }
 
     public async Task<UserResultDto> UpdateAsync(string id, UserUpdateDto dto)
     {
@@ -110,4 +130,21 @@ public class UserService : IUserService
         // Return the updated user DTO
         return mapper.Map<UserResultDto>(user);
     }
+
+    private async Task<bool> IsDoctorAvailableAtTimeAsync(DateTime appointmentDateTime, string doctorId)
+    {
+        // Define the end time for the time window (e.g., 10 minutes after the chosen appointment time)
+        DateTime endTime = appointmentDateTime.AddMinutes(10);
+
+        // Query the doctor's appointments within the specified time window
+        var overlappingAppointments = await appointmentrepo.RetrieveByExpressionAsync(appointment =>
+            appointment.DoctorId == doctorId &&
+            appointment.AppointmentDateTime < endTime &&
+            appointment.AppointmentDateTime >= appointmentDateTime &&
+            appointment.IsConfirmed);
+
+        // Check if any overlapping appointments are found
+        return !overlappingAppointments.Any();
+    }
+
 }

@@ -6,12 +6,13 @@ namespace MedLog.Service.Interfaces;
 public interface IHospitalService
 {
     Task<HospitalResultDto> CreateAsync(HospitalCreationDto dto);
-    Task<HospitalResultDto> UpdateAsync(string id, HospitalUpdateDto dto);
-    Task<HospitalResultDto> GetByIdAsync (string id);
-    Task<bool> DeleteByIdAsync (string id);
-    Task<List<HospitalResultDto>> GetAllAsync();
-    Task<List<string>> GetHospitalsInCity(string city);
     Task AddUserIdToHospital(string hospitalId, string newUserId);
+    Task<HospitalResultDto> UpdateAsync(string id, HospitalUpdateDto dto);
+    Task<bool> DeleteByIdAsync (string id);
+    Task<HospitalResultDto> GetByIdAsync (string id);
+    Task<List<string>> GetHospitalsInCity(string city);
+    Task<List<HospitalResultDto>> GetAllAsync();
+    
 
 
 }
