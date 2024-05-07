@@ -131,7 +131,7 @@ public class UserService : IUserService
         return mapper.Map<UserResultDto>(user);
     }
 
-    private async Task<bool> IsDoctorAvailableAtTimeAsync(DateTime appointmentDateTime, string doctorId)
+    public async Task<bool> IsDoctorAvailableAtTimeAsync(DateTime appointmentDateTime, string doctorId)
     {
         // Define the end time for the time window (e.g., 10 minutes after the chosen appointment time)
         DateTime endTime = appointmentDateTime.AddMinutes(10);
@@ -147,4 +147,5 @@ public class UserService : IUserService
         return !overlappingAppointments.Any();
     }
 
+    
 }
