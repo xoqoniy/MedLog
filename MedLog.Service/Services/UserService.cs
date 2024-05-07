@@ -28,7 +28,7 @@ public class UserService : IUserService
         this.hospitalService = hospitalService;
     }
 
-    public async Task<UserResultDto> CreateAsync(UserCreationDto userDto, string selectedHospitalId)
+    public async Task<UserResultDto> CreatePatientAsync(UserCreationDto userDto, string selectedHospitalId)
     {
         try
         {
@@ -47,6 +47,72 @@ public class UserService : IUserService
             // Save the User to obtain its ID
             await repository.InsertAsync(newUser);
             
+            // Retrieve the hospital entity by its ID
+            await hospitalService.AddUserIdToHospital(selectedHospitalId, newUser._id);
+
+            // Map the created user to UserResultDto
+            return mapper.Map<UserResultDto>(newUser);
+
+        }
+        catch (Exception ex)
+        {
+            // Handle any exceptions
+            throw new MedLogException(500, $"Failed to create user -> {ex.Message}");
+        }
+    }
+
+    public async Task<UserResultDto> CreateDoctorAsync(DoctorCreationDto dto, string selectedHospitalId)
+    {
+        try
+        {
+            // Generate an ObjectId for the address if needed
+            string addressId = ObjectId.GenerateNewId().ToString();
+
+            // Map the UserCreationDto to User entity
+            var newUser = mapper.Map<User>(dto);
+
+            // Assign the generated address ID to the address
+            newUser.Address._id = addressId;
+
+            // Assign the selected hospital ID to the user's HospitalId property
+            newUser.HospitalId = selectedHospitalId;
+
+            // Save the User to obtain its ID
+            await repository.InsertAsync(newUser);
+
+            // Retrieve the hospital entity by its ID
+            await hospitalService.AddUserIdToHospital(selectedHospitalId, newUser._id);
+
+            // Map the created user to UserResultDto
+            return mapper.Map<UserResultDto>(newUser);
+
+        }
+        catch (Exception ex)
+        {
+            // Handle any exceptions
+            throw new MedLogException(500, $"Failed to create user -> {ex.Message}");
+        }
+    }
+
+    public async Task<UserResultDto> CreateNurseAsync(NurseCreationDto dto, string selectedHospitalId)
+    {
+        try
+        {
+            // Generate an ObjectId for the address if needed
+            string addressId = ObjectId.GenerateNewId().ToString();
+
+            // Map the UserCreationDto to User entity
+            var newUser = mapper.Map<User>(dto);
+
+            // Assign the generated address ID to the address
+            newUser.Address._id = addressId;
+
+            // Assign the selected hospital ID to the user's HospitalId property
+            newUser.HospitalId = selectedHospitalId;
+
+            // Save the User to obtain its ID
+            await repository.InsertAsync(newUser);
+
             // Retrieve the hospital entity by its ID
             await hospitalService.AddUserIdToHospital(selectedHospitalId, newUser._id);
 

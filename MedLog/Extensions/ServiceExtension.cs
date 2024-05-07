@@ -15,5 +15,6 @@ public static class ServiceExtension
 
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IHospitalService, HospitalService>();
+        services.AddScoped<IAppointmentService,  AppointmentService>();
     }
 }
