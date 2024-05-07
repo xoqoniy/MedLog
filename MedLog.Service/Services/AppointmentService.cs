@@ -67,23 +67,86 @@ public class AppointmentService : IAppointmentService
         }
     }
 
-    public Task<bool> DeleteAsync(string appointmentId)
+    public async Task<bool> DeleteByAppointmentIdAsync(string appointmentId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var appointment = await appointmentRepository.RetrieveByIdAsync(appointmentId);
+            if (appointment == null)
+                throw new MedLogException(404, "Appointment not found");
+
+            await appointmentRepository.RemoveByIdAsync(appointmentId);
+            return true;
+        }
+        catch(Exception ex)
+        {
+            throw new MedLogException(404, "Couldn't delete the appointment" + ex.Message);
+        }
+        
     }
 
-    public Task<List<AppointmentResultDto>> GetAllAsync()
+    public async Task<List<AppointmentResultDto>> GetAppointmentsByDoctorIdAsync(string doctorId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var appointments = await appointmentRepository.RetrieveByExpressionAsync(appointment => appointment.DoctorId == doctorId);
+            return mapper.Map<List<AppointmentResultDto>>(appointments);
+        }
+        catch (Exception ex)
+        {
+            // Log the exception or handle it appropriately
+            throw new MedLogException(500, $"Failed to retrieve appointments by doctor ID: {ex.Message}");
+        }
     }
 
-    public Task<AppointmentResultDto> GetByPatientIdAsync(string patientId)
+    public async Task<List<AppointmentResultDto>> GetAllAppointmentsAsync()
     {
-        throw new NotImplementedException();
+        try
+        {
+            var appointments = await appointmentRepository.RetrieveAllAsync();
+            return mapper.Map<List<AppointmentResultDto>>(appointments);
+        }
+        catch (Exception ex)
+        {
+            // Log the exception or handle it appropriately
+            throw new MedLogException(500, $"Failed to retrieve all appointments: {ex.Message}");
+        }
     }
 
-    public Task<AppointmentResultDto> UpdateAsync(AppointmentUpdateDto dto, string patientId)
+
+    public async Task<List<AppointmentResultDto>> GetAppointmentsByPatientIdAsync(string patientId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var appointments = await appointmentRepository.RetrieveByExpressionAsync(appointment => appointment.PatientId == patientId);
+            return mapper.Map<List<AppointmentResultDto>>(appointments);
+        }
+        catch (Exception ex)
+        {
+            throw new MedLogException(404, "Couldn't get the appointments" + ex.Message);
+        }
+    }
+
+
+    public async Task<AppointmentResultDto> UpdateAsync(AppointmentUpdateDto dto, string appointmentId)
+    {
+        try
+        {
+            var appointment = await appointmentRepository.RetrieveByIdAsync(appointmentId);
+            if (appointment == null)
+                throw new MedLogException(404, "Appointment not found");
+
+            mapper.Map(dto, appointment);
+
+            // Perform any additional validation or business logic
+
+            await appointmentRepository.ReplaceByIdAsync(appointment);
+
+            return mapper.Map<AppointmentResultDto>(appointment);
+        }
+        catch(Exception ex)
+        {
+            throw new MedLogException(402, "Couldn't update the appointment" + ex.Message);
+        }
     }
 }
