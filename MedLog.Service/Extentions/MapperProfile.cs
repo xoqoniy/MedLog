@@ -19,6 +19,8 @@ public class MapperProfile : Profile
         CreateMap<User, UserUpdateDto>().ReverseMap();
         CreateMap<User, UserResultDto>().ReverseMap();
         CreateMap<User, DoctorDto>().ReverseMap();
+        CreateMap<User, DoctorCreationDto>().ReverseMap();
+        CreateMap<User, NurseCreationDto>().ReverseMap();
 
 
         //Address Mapping

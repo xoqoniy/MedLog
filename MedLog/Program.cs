@@ -15,10 +15,6 @@ internal class Program
         //MongoDb Database Configuration
         builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDbSettings"));
 
-        // Add services to the container.
-
-
-
         builder.Services.AddControllers(options =>
         {
             options.SuppressAsyncSuffixInActionNames = false;

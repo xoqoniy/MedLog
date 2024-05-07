@@ -22,7 +22,7 @@ public class AppointmentService : IAppointmentService
         this.mapper = mapper;
     }
 
-    public async Task<AppointmentResultDto> CreateAsync(AppointmentCreationDto dto, string patientId)
+    public async Task<AppointmentResultDto> CreateAsync(AppointmentCreationDto dto, string patientId, string doctorId)
     {
         try
         {
@@ -37,12 +37,12 @@ public class AppointmentService : IAppointmentService
 
             string hospitalId = patient.HospitalId;
 
-            var doctors = await userService.GetDoctorsByHospitalId(hospitalId);
-            var chosenDoctor = doctors.FirstOrDefault(d => d.Id == dto.DoctorId);
-            if (chosenDoctor == null)
-                throw new MedLogException(400, "Chosen doctor is not available at the selected time");
+            //var doctors = await userService.GetDoctorsByHospitalId(hospitalId);
+            //var chosenDoctor = doctors.FirstOrDefault(d => d.Id == doctorId);
+            //if (chosenDoctor == null)
+            //    throw new MedLogException(400, "Chosen doctor is not available at the selected time");
 
-            bool isDoctorAvailable = await userService.IsDoctorAvailableAtTimeAsync(dto.AppointmentDateTime, chosenDoctor.Id);
+            bool isDoctorAvailable = await userService.IsDoctorAvailableAtTimeAsync(dto.AppointmentDateTime, doctorId);
             if (!isDoctorAvailable)
                 throw new MedLogException(400, "Chosen doctor is not available at the selected time");
 
@@ -52,7 +52,7 @@ public class AppointmentService : IAppointmentService
 
             // Assign patient and doctor to the appointment
             newAppointment.PatientId = patientId;
-            newAppointment.DoctorId = chosenDoctor.Id;
+            newAppointment.DoctorId = doctorId;
 
             // Save the appointment to the database
             await appointmentRepository.InsertAsync(newAppointment);

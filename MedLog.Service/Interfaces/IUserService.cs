@@ -7,7 +7,10 @@ namespace MedLog.Service.Interfaces;
 
 public interface IUserService
 {
-    Task<UserResultDto> CreateAsync(UserCreationDto userDto, string selectedHospitalId);
+    Task<UserResultDto> CreatePatientAsync(UserCreationDto userDto, string selectedHospitalId);
+    Task<UserResultDto> CreateDoctorAsync(DoctorCreationDto dto, string selectedHospitalId);
+    Task<UserResultDto> CreateNurseAsync(NurseCreationDto dto, string selectedHospitalId);
+
     Task<UserResultDto> UpdateAsync(string id, UserUpdateDto dto);
     Task<bool> DeleteAsync (string id);
     Task<UserResultDto> GetAsync (string id);

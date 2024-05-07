@@ -25,13 +25,26 @@ namespace MedLog.Controllers
             return user;
         }
 
-        [HttpPost]
+        [HttpPost("patient")]
         public async Task<ActionResult<UserResultDto>> PostAsync(string selectedHospitalId, [FromBody] UserCreationDto dto)
         {
-            var user = await userService.CreateAsync(dto, selectedHospitalId);
+            var user = await userService.CreatePatientAsync(dto, selectedHospitalId);
             return Ok(user);
         }
 
+        [HttpPost("doctor")]
+        public async Task<ActionResult<UserResultDto>> PostDoctorAsync(string selectedHospitalId, [FromBody] DoctorCreationDto dto)
+        {
+            var user = await userService.CreateDoctorAsync(dto, selectedHospitalId);
+            return Ok(user);
+        }
+
+        [HttpPost("nurse")]
+        public async Task<ActionResult<UserResultDto>> PostNurseAsync(string selectedHospitalId, [FromBody] NurseCreationDto dto)
+        {
+            var user = await userService.CreateNurseAsync(dto, selectedHospitalId);
+            return Ok(user);
+        }
         [HttpPut("{id}")]
         public async Task<ActionResult<UserResultDto>> PutAsync([FromRoute] string id, [FromBody] UserUpdateDto dto)
         {

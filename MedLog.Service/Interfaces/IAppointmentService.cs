@@ -5,7 +5,7 @@ namespace MedLog.Service.Interfaces;
 
 public interface IAppointmentService
 {
-    Task<AppointmentResultDto> CreateAsync(AppointmentCreationDto dto, string patientId);
+    Task<AppointmentResultDto> CreateAsync(AppointmentCreationDto dto, string patientId, string doctorId);
     Task<AppointmentResultDto> UpdateAsync(AppointmentUpdateDto dto, string appointmentId);
     Task<bool> DeleteByAppointmentIdAsync(string appointmentId);
     Task<List<AppointmentResultDto>> GetAllAppointmentsAsync();
