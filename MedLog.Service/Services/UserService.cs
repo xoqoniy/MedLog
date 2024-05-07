@@ -63,27 +63,46 @@ public class UserService : IUserService
 
     public async Task<bool> DeleteAsync(string id)
     {
-        var user = await repository.RetrieveByIdAsync(id);
-        if(user is null)
-            throw new MedLogException(404, "User not found");
-        
-        await repository.RemoveByIdAsync(id);
-        return true;
+        try
+        {
+            var user = await repository.RetrieveByIdAsync(id);
+            if (user is null)
+                throw new MedLogException(404, "User not found");
+
+            await repository.RemoveByIdAsync(id);
+            return true;
+        }
+        catch(Exception ex)
+        {
+            throw new MedLogException(404, "User wasn't deleted " + ex.Message);
+        }
+
     }
 
     public async Task<List<UserResultDto>> GetAllAsync()
     {
-        var users = await repository.RetrieveAllAsync();
-        return mapper.Map<List<UserResultDto>>(users);
+        try
+        {
+            var users = await repository.RetrieveAllAsync();
+            return mapper.Map<List<UserResultDto>>(users);
+        }
+        catch(Exception ex)
+        {
+            throw new MedLogException(404, "Couldn't retrive the users " + ex.Message);
+        }
     }
 
     public async Task<UserResultDto> GetAsync(string id)
     {
-        var user = await repository.RetrieveByIdAsync(id);
-        if(user is null)
-            throw new MedLogException(404, "User not found");
-        
-        return mapper.Map<UserResultDto>(user);
+        try
+        {
+            var user = await repository.RetrieveByIdAsync(id);
+            return mapper.Map<UserResultDto>(user);
+        }
+        catch(Exception ex)
+        {
+            throw new MedLogException(403, $"User couldn't be found -> {ex.Message}");
+        }
     }
 
     public async Task<List<DoctorDto>> GetDoctorsByHospitalId(string hospitalId)
@@ -109,42 +128,58 @@ public class UserService : IUserService
 
     public async Task<UserResultDto> UpdateAsync(string id, UserUpdateDto dto)
     {
-        var user = await repository.RetrieveByIdAsync(id);
+        try
+        {
+            var user = await repository.RetrieveByIdAsync(id);
 
-        if(user is null)
-            throw new MedLogException(404, "User not found");
-        
+            if (user is null)
+                throw new MedLogException(404, "User not found");
 
-        // Map the properties from the update DTO to the existing user
-        mapper.Map(dto, user);
 
-        // Update additional properties if needed
+            // Map the properties from the update DTO to the existing user
+            mapper.Map(dto, user);
 
-        user.LastUpdatedAt = DateTime.UtcNow;
+            // Update additional properties if needed
 
-        // Perform server-side validation if needed
+            user.LastUpdatedAt = DateTime.UtcNow;
 
-        // Update the user
-        await repository.ReplaceByIdAsync(user);
+            // Perform server-side validation if needed
 
-        // Return the updated user DTO
-        return mapper.Map<UserResultDto>(user);
+            // Update the user
+            await repository.ReplaceByIdAsync(user);
+
+            // Return the updated user DTO
+            return mapper.Map<UserResultDto>(user);
+        }
+        catch(Exception ex)
+        {
+            throw new MedLogException(500, "Couldn't update the user" + ex.Message);
+        }
     }
 
-    private async Task<bool> IsDoctorAvailableAtTimeAsync(DateTime appointmentDateTime, string doctorId)
+    public async Task<bool> IsDoctorAvailableAtTimeAsync(DateTime appointmentDateTime, string doctorId)
     {
-        // Define the end time for the time window (e.g., 10 minutes after the chosen appointment time)
-        DateTime endTime = appointmentDateTime.AddMinutes(10);
+        try
+        {
+            // Define the end time for the time window (e.g., 10 minutes after the chosen appointment time)
+            DateTime endTime = appointmentDateTime.AddMinutes(10);
 
-        // Query the doctor's appointments within the specified time window
-        var overlappingAppointments = await appointmentrepo.RetrieveByExpressionAsync(appointment =>
-            appointment.DoctorId == doctorId &&
-            appointment.AppointmentDateTime < endTime &&
-            appointment.AppointmentDateTime >= appointmentDateTime &&
-            appointment.IsConfirmed);
+            // Query the doctor's appointments within the specified time window
+            var overlappingAppointments = await appointmentrepo.RetrieveByExpressionAsync(appointment =>
+                appointment.DoctorId == doctorId &&
+                appointment.AppointmentDateTime < endTime &&
+                appointment.AppointmentDateTime >= appointmentDateTime &&
+                appointment.IsConfirmed);
 
-        // Check if any overlapping appointments are found
-        return !overlappingAppointments.Any();
+            // Check if any overlapping appointments are found
+            return !overlappingAppointments.Any();
+
+        }
+        catch(Exception ex)
+        {
+            throw new MedLogException(500, ex.Message);
+        }
     }
 
+    
 }
