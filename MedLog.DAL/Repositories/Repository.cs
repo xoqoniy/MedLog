@@ -6,6 +6,7 @@ using MedLog.DAL.DbContexts;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using System.Linq.Expressions;
+using Microsoft.Extensions.Configuration;
 
 namespace MedLog.DAL.Repositories;
 
@@ -13,15 +14,20 @@ public class Repository<T> : IRepository<T> where T : Auditable
 {
     // MongoDB collection for the specified entity type T
     private readonly IMongoCollection<T> _collection;
+    private readonly IConfiguration configuration;
 
     // Filter builder for creating MongoDB filter definitions
     private readonly FilterDefinitionBuilder<T> _filterBuilder = Builders<T>.Filter;
 
     // Constructor that takes MongoDB settings as a dependency
-    public Repository(IOptions<MongoDbSettings> mongodbSettings)
+    public Repository(IOptions<MongoDbSettings> mongodbSettings, IConfiguration configuration)
     {
-        // Create a MongoDB client using the connection string from settings
-        MongoClient client = new(mongodbSettings.Value.ConnectionStringURL);
+        this.configuration = configuration;
+
+        string connectionString = configuration["MongoDbSettings:ConnectionStringURL"];
+
+        // Create a MongoDB client using the connection string
+        MongoClient client = new MongoClient(connectionString);
 
         // Get the MongoDB database using the database name from settings
         IMongoDatabase database = client.GetDatabase(mongodbSettings.Value.DatabaseName);

@@ -5,12 +5,13 @@ using MedLog.Domain.Entities;
 using MedLog.Extensions;
 using MedLog.Service.Extentions;
 using MongoDB.Driver;
-
+using Microsoft.Extensions.Configuration;
 internal class Program
 {
     private static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        builder.Configuration.AddJsonFile("secrets.json", optional: true, reloadOnChange: true);
 
         //MongoDb Database Configuration
         builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDbSettings"));
@@ -22,7 +23,7 @@ internal class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
-
+        
         //Registering Services
         builder.Services.AddCustomServices();
 
