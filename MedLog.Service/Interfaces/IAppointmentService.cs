@@ -1,5 +1,4 @@
-﻿
-using MedLog.Service.DTOs.AppointmentDTOs;
+﻿using MedLog.Service.DTOs.AppointmentDTOs;
 
 namespace MedLog.Service.Interfaces;
 

@@ -1,5 +1,4 @@
-﻿
-using AutoMapper;
+﻿using AutoMapper;
 using MedLog.DAL.IRepositories;
 using MedLog.Domain.Entities;
 using MedLog.Service.DTOs.HospitalDTOs;

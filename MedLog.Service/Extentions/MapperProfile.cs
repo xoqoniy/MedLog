@@ -1,6 +1,4 @@
-﻿
-
-using AutoMapper;
+﻿using AutoMapper;
 using MedLog.Domain.Entities;
 using MedLog.Service.DTOs.AddressDTOs;
 using MedLog.Service.DTOs.AppointmentDTOs;
