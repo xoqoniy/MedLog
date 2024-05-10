@@ -11,6 +11,7 @@ internal class Program
     private static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        //Configuration of User secrets for database connection string
         builder.Configuration.AddJsonFile("secrets.json", optional: true, reloadOnChange: true);
 
         //MongoDb Database Configuration

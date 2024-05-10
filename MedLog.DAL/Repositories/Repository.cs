@@ -23,11 +23,11 @@ public class Repository<T> : IRepository<T> where T : Auditable
     public Repository(IOptions<MongoDbSettings> mongodbSettings, IConfiguration configuration)
     {
         this.configuration = configuration;
-
+       
         string connectionString = configuration["MongoDbSettings:ConnectionStringURL"];
 
         // Create a MongoDB client using the connection string
-        MongoClient client = new MongoClient(connectionString);
+        MongoClient client = new (connectionString);
 
         // Get the MongoDB database using the database name from settings
         IMongoDatabase database = client.GetDatabase(mongodbSettings.Value.DatabaseName);
