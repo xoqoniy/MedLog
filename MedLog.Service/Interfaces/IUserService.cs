@@ -16,5 +16,6 @@ public interface IUserService
     Task<UserResultDto> GetAsync (string id);
     Task<bool> IsDoctorAvailableAtTimeAsync(DateTime appointmentDateTime, string doctorId);
     Task<List<DoctorDto>> GetDoctorsByHospitalId (string hospitalId);
+    Task<List<UserResultDto>> GetNursesByHospitalId(string hospitalId);
     Task<List<UserResultDto>> GetAllAsync ();
 }

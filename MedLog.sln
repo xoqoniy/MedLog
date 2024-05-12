@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedLog", "D:\MedLog\MedLog\MedLog.csproj", "{8E5992CE-9810-41DC-8163-C2551B0FD7C0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedLog", "D:\MedLog\MedLog\MedLog.csproj", "{8E5992CE-9810-41DC-8163-C2551B0FD7C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedLog.Domain", "D:\MedLog\MedLog.Domain\MedLog.Domain.csproj", "{C992C63B-C99B-4993-8E2D-BFF51F0E297F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedLog.Domain", "D:\MedLog\MedLog.Domain\MedLog.Domain.csproj", "{C992C63B-C99B-4993-8E2D-BFF51F0E297F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedLog.DAL", "D:\MedLog\MedLog.DAL\MedLog.DAL.csproj", "{C7E50DD7-4B33-42BD-AC43-76BCD006F040}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedLog.DAL", "D:\MedLog\MedLog.DAL\MedLog.DAL.csproj", "{C7E50DD7-4B33-42BD-AC43-76BCD006F040}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedLog.Service", "D:\MedLog\MedLog.Service\MedLog.Service.csproj", "{5DB8B427-29E1-443B-B5B7-524C301C77B6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedLog.Service", "D:\MedLog\MedLog.Service\MedLog.Service.csproj", "{5DB8B427-29E1-443B-B5B7-524C301C77B6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
