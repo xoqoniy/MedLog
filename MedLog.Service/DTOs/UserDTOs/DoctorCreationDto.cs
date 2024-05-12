@@ -1,5 +1,6 @@
 ﻿using MedLog.Domain.Enums;
 using MedLog.Service.DTOs.AddressDTOs;
+using System.ComponentModel.DataAnnotations;
 
 namespace MedLog.Service.DTOs.UserDTOs;
 
@@ -13,7 +14,6 @@ public class DoctorCreationDto
     public Gender Gender { get; set; }
     public int BloodType { get; set; }
     public AddressCreationDto Address { get; set; }
-    public Role UserRole { get; set; } = Role.Doctor;
     public string Specialization { get; set; }
     public decimal Experience { get; set; }
 }

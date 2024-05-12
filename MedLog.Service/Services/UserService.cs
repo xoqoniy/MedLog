@@ -2,6 +2,7 @@
 using AutoMapper.Internal;
 using MedLog.DAL.IRepositories;
 using MedLog.Domain.Entities;
+using MedLog.Domain.Enums;
 using MedLog.Service.DTOs.AddressDTOs;
 using MedLog.Service.DTOs.DoctorDTOs;
 using MedLog.Service.DTOs.HospitalDTOs;
@@ -73,6 +74,7 @@ public class UserService : IUserService
 
             // Assign the generated address ID to the address
             newUser.Address._id = addressId;
+            newUser.UserRole = Role.Doctor;
 
             // Assign the selected hospital ID to the user's HospitalId property
             newUser.HospitalId = selectedHospitalId;
@@ -106,6 +108,8 @@ public class UserService : IUserService
 
             // Assign the generated address ID to the address
             newUser.Address._id = addressId;
+
+            newUser.UserRole= Role.Nurse;
 
             // Assign the selected hospital ID to the user's HospitalId property
             newUser.HospitalId = selectedHospitalId;
@@ -171,19 +175,33 @@ public class UserService : IUserService
         }
     }
 
+
+    public async Task<List<UserResultDto>> GetNursesByHospitalId (string hospitalId)
+    {
+        try
+        {
+            var nurses = await repository.RetrieveByExpressionAsync(u =>
+                u.UserRole == Role.Nurse && u.HospitalId == hospitalId);
+            return mapper.Map<List<UserResultDto>>(nurses);
+        }
+        catch(Exception ex)
+        {
+            throw new MedLogException(403, "NurseRetrievingByHospitalId -> " + ex.Message);
+        }
+    }
     public async Task<List<DoctorDto>> GetDoctorsByHospitalId(string hospitalId)
     {
         try
         {
             var doctors = await repository.RetrieveByExpressionAsync(u =>
-                u.UserRole == Domain.Enums.Role.Doctor && u.Specialization != null && u.HospitalId == hospitalId);
+                u.UserRole == Role.Doctor && u.HospitalId == hospitalId);
 
-            var doctorDtos = mapper.Map<List<DoctorDto>>(doctors.Select(d => new DoctorDto
+            var doctorDtos = doctors.Select(d => new DoctorDto
             {
                 Id = d._id,
                 FullName = $"{d.FirstName} {d.LastName}",
                 Specialization = d.Specialization
-            }));
+            }).ToList();
             return doctorDtos;
         }
         catch(Exception ex)
