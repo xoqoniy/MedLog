@@ -10,7 +10,7 @@ namespace MedLog.Service.Exceptions;
 public class MedLogException : Exception
 {
     public int Code { get; set; }
-	public MedLogException(int code = 500, string message = "Nimadir xato ketti") : base(message)
+	public MedLogException(int code = 500, string message = "Something went wrong") : base(message)
 	{
 		this.Code = code;	
 	}
