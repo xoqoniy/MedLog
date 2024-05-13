@@ -1,5 +1,6 @@
 ﻿namespace MedLog.Service.DTOs.PatientRecordDTOs;
 
+#pragma warning disable
 public class PatientRecordUpdateDto
 {
     public string Description { get; set; } // Description of the patient's condition or visit
