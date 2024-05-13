@@ -4,6 +4,7 @@ using MedLog.Service.DTOs.AddressDTOs;
 using MedLog.Service.DTOs.AppointmentDTOs;
 using MedLog.Service.DTOs.DoctorDTOs;
 using MedLog.Service.DTOs.HospitalDTOs;
+using MedLog.Service.DTOs.PatientRecordDTOs;
 using MedLog.Service.DTOs.UserDTOs;
 
 namespace MedLog.Service.Extentions;
@@ -40,5 +41,9 @@ public class MapperProfile : Profile
         CreateMap<Appointment, AppointmentCreationDto>().ReverseMap();
         CreateMap<Appointment, AppointmentUpdateDto>().ReverseMap();
         CreateMap<Appointment, AppointmentResultDto>().ReverseMap();
+
+        CreateMap<PatientRecord, PatientRecordCreationDto>().ReverseMap();
+        CreateMap<PatientRecord, PatientRecordUpdateDto>().ReverseMap();
+        CreateMap<PatientRecord, PatientRecordUpdateDto>().ReverseMap();
     }
 }
