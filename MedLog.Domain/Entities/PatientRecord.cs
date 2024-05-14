@@ -8,7 +8,6 @@ namespace MedLog.Domain.Entities
     public class PatientRecord : Auditable
     {
 
-        public string CreatedByUserId { get; set; } // ID or username of the user who created the record
         public string PatientId { get; set; } // Reference to the patient (User entity)
 
         public string Description { get; set; } // Description of the patient's condition or visit

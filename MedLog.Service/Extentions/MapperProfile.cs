@@ -44,6 +44,6 @@ public class MapperProfile : Profile
 
         CreateMap<PatientRecord, PatientRecordCreationDto>().ReverseMap();
         CreateMap<PatientRecord, PatientRecordUpdateDto>().ReverseMap();
-        CreateMap<PatientRecord, PatientRecordUpdateDto>().ReverseMap();
+        CreateMap<PatientRecord, PatientRecordResultDto>().ReverseMap();
     }
 }

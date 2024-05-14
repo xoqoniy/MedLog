@@ -3,6 +3,8 @@ using AutoMapper;
 using MedLog.DAL.IRepositories;
 using MedLog.Domain.Entities;
 using MedLog.Service.DTOs.PatientRecordDTOs;
+using MedLog.Service.DTOs.UserDTOs;
+using MedLog.Service.Exceptions;
 using MedLog.Service.Interfaces;
 
 namespace MedLog.Service.Services;
@@ -17,33 +19,110 @@ public class PatientRecordService : IPatientRecordService
         this.mapper = _mapper;
         this.repository = _repository;
     }
-    public Task<PatientRecordResultDto> CreateAsync(string patientId, PatientRecordCreationDto dto)
+    public async Task<PatientRecordResultDto> CreateAsync(string patientId, PatientRecordCreationDto dto)
     {
-        throw new NotImplementedException();
+        try
+        {
+            if(patientId != null)
+            {
+                var patientRecord = mapper.Map<PatientRecord>(dto);
+                patientRecord.PatientId = patientId;
+                await repository.InsertAsync(patientRecord);
+                return mapper.Map<PatientRecordResultDto>(patientRecord);
+            }
+            else
+            {
+                throw new MedLogException(403, "PatientId didn't match");
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new MedLogException(403, ex.Message);
+        }
     }
 
-    public Task<bool> DeleteAsync(string patientId)
+    public async Task<bool> DeleteAsync(string patientRecordId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var patientRecord = await repository.RetrieveByIdAsync(patientRecordId);
+            if (patientRecord is null)
+                throw new MedLogException(404, "Record not found");
+
+            await repository.RemoveByIdAsync(patientRecordId);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            throw new MedLogException(404, "Record wasn't deleted " + ex.Message);
+        }
     }
 
-    public Task<List<PatientRecordResultDto>> GetAllPatientRecords()
+    public async Task<List<PatientRecordResultDto>> GetAllPatientRecords()
     {
-        throw new NotImplementedException();
+        try
+        {
+            var patientRecords = await repository.RetrieveAllAsync();
+            return mapper.Map<List<PatientRecordResultDto>>(patientRecords);
+        }
+        catch (Exception ex)
+        {
+            throw new MedLogException(404, "Couldn't retrive the records " + ex.Message);
+        }
     }
 
-    public Task<PatientRecordResultDto> GetAsync(string patientId)
+    public async Task<PatientRecordResultDto> GetPatientRecordById(string recordId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var patientRecord = await repository.RetrieveByIdAsync(recordId);
+            return mapper.Map<PatientRecordResultDto>(patientRecord);
+        }
+        catch (Exception ex)
+        {
+            throw new MedLogException(403, "Couldn't retrieve the record " + ex.Message);
+        }
     }
 
-    public Task<List<PatientRecordResultDto>> GetPatientRecordsById(string patientId)
+    public async Task<List<PatientRecordResultDto>> GetPatientRecordsById(string patientId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var patientRecords = await repository.RetrieveByExpressionAsync(p => p.PatientId == patientId);
+            return mapper.Map<List<PatientRecordResultDto>>(patientRecords);
+        }
+        catch (Exception ex)
+        {
+            throw new MedLogException(403, "Couldn't retrieve the records " + ex.Message);
+        }
     }
 
-    public Task<PatientRecordResultDto> UpdateAsync(string patientId, PatientRecordUpdateDto dto)
+    public async Task<PatientRecordResultDto> UpdateAsync(string patientRecordId, PatientRecordUpdateDto dto)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var patientRecord = await repository.RetrieveByIdAsync(patientRecordId);
+
+            if (patientRecord is null)
+                throw new MedLogException(404, "Record not found");
+
+
+            // Map the properties from the update DTO to the existing user
+            mapper.Map(dto, patientRecord);
+
+            // Update additional properties if needed
+
+            patientRecord.LastUpdatedAt = DateTime.UtcNow;
+
+            // Update the user
+            await repository.ReplaceByIdAsync(patientRecord);
+
+            // Return the updated user DTO
+            return mapper.Map<PatientRecordResultDto>(patientRecord);
+        }
+        catch (Exception ex)
+        {
+            throw new MedLogException(500, "Couldn't update the record" + ex.Message);
+        }
     }
 }
