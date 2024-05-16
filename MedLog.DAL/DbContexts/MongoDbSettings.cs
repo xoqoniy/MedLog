@@ -12,4 +12,5 @@ public class MongoDbSettings
     public string HospitalsCollection { get; set; }
     public string AppointmentsCollection { get; set; }
     public string PatientRecordsCollection { get; set; }
+    public string FilesStorage {  get; set; }
 }
