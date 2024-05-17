@@ -1,8 +1,10 @@
 ﻿using MedLog.DAL.IRepositories;
 using MedLog.DAL.Repositories;
 using MedLog.Service.Interfaces;
+using MedLog.Service.IServices;
 using MedLog.Service.Services;
 using Microsoft.AspNetCore.DataProtection.Repositories;
+using MongoDB.Driver;
 
 namespace MedLog.Extensions;
 
@@ -18,5 +20,7 @@ public static class ServiceExtension
         services.AddScoped<IHospitalService, HospitalService>();
         services.AddScoped<IAppointmentService,  AppointmentService>();
         services.AddScoped<IPatientRecordService, PatientRecordService>();
+        services.AddScoped<IFileService,  FileService>();
+        
     }
 }

@@ -20,7 +20,7 @@ namespace MedLog.DAL.Repositories
 
         public FileRepository(IOptions<MongoDbSettings> mongodbSettings, IMongoDatabase database)
         {
-            _database = database;
+            this._database = database;
             _fileStorage = mongodbSettings.Value.FilesStorage;
             fsBucket = new GridFSBucket(database, new GridFSBucketOptions { BucketName = _fileStorage });
         }
