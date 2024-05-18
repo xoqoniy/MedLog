@@ -8,6 +8,6 @@ namespace MedLog.Service.IServices
         Task<FileResultDto> UploadFileAsync(FileCreationDto fileCreationDto);
         Task<FileResultDto> DownloadFileAsync(string id);
         Task<bool> DeleteFileAsync(string id);
-        Task<FileResultDto> UpdateFileAsync(FileUpdateDto fileUpdateDto);
+        FileResultDto UpdateFile(FileUpdateDto fileUpdateDto);
     }
 }

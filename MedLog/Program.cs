@@ -7,6 +7,7 @@ using MedLog.Service.Extentions;
 using MongoDB.Driver;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using Serilog;
 internal class Program
 {
     private static void Main(string[] args)
@@ -43,6 +44,18 @@ internal class Program
             return client.GetDatabase(settings.DatabaseName);
         });
 
+        var configuration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json")
+            .Build();
+
+        var logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(configuration)
+            //.Enrich.FromLogContext()
+            .CreateLogger();
+       // builder.Logging.ClearProviders();
+        builder.Logging.AddSerilog(logger);
+        
+
 
         builder.Services.AddAutoMapper(typeof(MapperProfile));
         var app = builder.Build();
@@ -55,9 +68,7 @@ internal class Program
         }
 
         app.UseHttpsRedirection();
-
         app.UseAuthorization();
-
         app.MapControllers();
 
         app.Run();

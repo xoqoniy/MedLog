@@ -60,9 +60,9 @@ namespace MedLog.API.Controllers
         }
 
         [HttpPut("update")]
-        public async Task<IActionResult> UpdateFile([FromBody] FileUpdateDto fileUpdateDto)
+        public IActionResult UpdateFile([FromBody] FileUpdateDto fileUpdateDto)
         {
-            var result = await _fileService.UpdateFileAsync(fileUpdateDto);
+            var result = _fileService.UpdateFile(fileUpdateDto);
             if (result == null)
             {
                 return NotFound();

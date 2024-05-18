@@ -81,11 +81,11 @@ namespace MedLog.Service.Services
             return true;
         }
 
-        public async Task<FileResultDto> UpdateFileAsync(FileUpdateDto fileUpdateDto)
+        public FileResultDto UpdateFile(FileUpdateDto fileUpdateDto)
         {
             // Assuming you have a way to retrieve and update file details in the database, you can do so here
             // For now, we'll mock the update
-            var fileDetails = new FileEntity
+            var fileDetails =  new FileEntity
             {
                 _id = fileUpdateDto.Id,
                 FileName = fileUpdateDto.FileName,
