@@ -6,6 +6,8 @@ using MedLog.Extensions;
 using MedLog.Service.Extentions;
 using MongoDB.Driver;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using Serilog;
 internal class Program
 {
     private static void Main(string[] args)
@@ -15,7 +17,6 @@ internal class Program
         builder.Configuration.AddJsonFile("secrets.json", optional: true, reloadOnChange: true);
 
         //MongoDb Database Configuration
-        builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDbSettings"));
 
         builder.Services.AddControllers(options =>
         {
@@ -26,7 +27,35 @@ internal class Program
         builder.Services.AddSwaggerGen();
         
         //Registering Services
-        builder.Services.AddCustomServices();
+        builder.Services.AddCustomServices();// Register MongoDB settings
+        builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDbSettings"));
+
+        // Register MongoDB client and database
+        builder.Services.AddSingleton<IMongoClient, MongoClient>(sp =>
+        {
+            var settings = sp.GetRequiredService<IOptions<MongoDbSettings>>().Value;
+            return new MongoClient(settings.ConnectionStringURL);
+        });
+
+        builder.Services.AddScoped(sp =>
+        {
+            var client = sp.GetRequiredService<IMongoClient>();
+            var settings = sp.GetRequiredService<IOptions<MongoDbSettings>>().Value;
+            return client.GetDatabase(settings.DatabaseName);
+        });
+
+        var configuration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json")
+            .Build();
+
+        var logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(configuration)
+            //.Enrich.FromLogContext()
+            .CreateLogger();
+       // builder.Logging.ClearProviders();
+        builder.Logging.AddSerilog(logger);
+        
+
 
         builder.Services.AddAutoMapper(typeof(MapperProfile));
         var app = builder.Build();
@@ -39,9 +68,7 @@ internal class Program
         }
 
         app.UseHttpsRedirection();
-
         app.UseAuthorization();
-
         app.MapControllers();
 
         app.Run();
