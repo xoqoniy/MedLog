@@ -31,11 +31,11 @@ internal class Program
         builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDbSettings"));
 
         // Register MongoDB client and database
-        //builder.Services.AddSingleton<IMongoClient, MongoClient>(sp =>
-        //{
-        //    var settings = sp.GetRequiredService<IOptions<MongoDbSettings>>().Value;
-        //    return new MongoClient(settings.ConnectionStringURL);
-        //});
+        builder.Services.AddSingleton<IMongoClient, MongoClient>(sp =>
+        {
+            var settings = sp.GetRequiredService<IOptions<MongoDbSettings>>().Value;
+            return new MongoClient(settings.ConnectionStringURL);
+        });
 
         builder.Services.AddScoped(sp =>
         {
