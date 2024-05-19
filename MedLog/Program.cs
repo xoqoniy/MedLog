@@ -31,11 +31,11 @@ internal class Program
         builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDbSettings"));
 
         // Register MongoDB client and database
-        builder.Services.AddSingleton<IMongoClient, MongoClient>(sp =>
-        {
-            var settings = sp.GetRequiredService<IOptions<MongoDbSettings>>().Value;
-            return new MongoClient(settings.ConnectionStringURL);
-        });
+        //builder.Services.AddSingleton<IMongoClient, MongoClient>(sp =>
+        //{
+        //    var settings = sp.GetRequiredService<IOptions<MongoDbSettings>>().Value;
+        //    return new MongoClient(settings.ConnectionStringURL);
+        //});
 
         builder.Services.AddScoped(sp =>
         {
@@ -54,8 +54,16 @@ internal class Program
             .CreateLogger();
        // builder.Logging.ClearProviders();
         builder.Logging.AddSerilog(logger);
-        
 
+
+        //Cors
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("MyCors", builder =>
+            {
+                builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+            });
+        });
 
         builder.Services.AddAutoMapper(typeof(MapperProfile));
         var app = builder.Build();
