@@ -50,7 +50,6 @@ public class MapperProfile : Profile
 
         //File Mapping
         CreateMap<FileEntity, FileCreationDto>().ReverseMap();
-        CreateMap<FileEntity, FileUpdateDto>().ReverseMap();
         CreateMap<FileEntity, FileResultDto>().ReverseMap();
 
         
