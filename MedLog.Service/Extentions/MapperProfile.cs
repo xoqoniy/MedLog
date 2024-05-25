@@ -49,7 +49,10 @@ public class MapperProfile : Profile
         CreateMap<PatientRecord, PatientRecordResultDto>().ReverseMap();
 
         //File Mapping
-        CreateMap<FileEntity, FileCreationDto>().ReverseMap();
+        CreateMap<FileEntity, FileCreationDto>()
+     .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content)); // Assuming the property names are the same
+        CreateMap<FileCreationDto, FileEntity>().ReverseMap();
+
         CreateMap<FileEntity, FileResultDto>().ReverseMap();
 
         
