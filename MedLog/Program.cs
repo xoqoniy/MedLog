@@ -8,6 +8,7 @@ using MongoDB.Driver;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Serilog;
+using Microsoft.OpenApi.Models;
 internal class Program
 {
     private static void Main(string[] args)
@@ -65,6 +66,7 @@ internal class Program
             });
         });
 
+        
         builder.Services.AddAutoMapper(typeof(MapperProfile));
         var app = builder.Build();
 

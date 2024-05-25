@@ -56,6 +56,7 @@ namespace MedLog.Service.Services
             }
             catch (Exception ex)
             {
+                
                 // Log exception (e.g., using a logging framework)
                 throw new ApplicationException("An error occurred while downloading the file.", ex);
             }
@@ -65,10 +66,16 @@ namespace MedLog.Service.Services
         {
             _logger.LogInformation("Starting file upload for user {UserId}", userId);
 
-            if (fileCreationDto.FileStream == null)
+            if (fileCreationDto.Content == null)
             {
                 _logger.LogError("File stream is null for user {UserId}", userId);
-                throw new ArgumentNullException(nameof(fileCreationDto.FileStream), "File stream cannot be null.");
+                throw new ArgumentNullException(nameof(fileCreationDto.Content), "File stream cannot be null.");
+            }
+
+            // Check if the stream position is not at the beginning, then set it to the beginning
+            if (fileCreationDto.Content.Position != 0)
+            {
+                fileCreationDto.Content.Seek(0, SeekOrigin.Begin);
             }
 
             if (string.IsNullOrWhiteSpace(fileCreationDto.FileName))
