@@ -1,110 +1,101 @@
 ﻿using System.IO;
+using System.Net.Mime;
 using System.Threading.Tasks;
+using Amazon.Runtime.Internal.Util;
+using AutoMapper;
 using MedLog.DAL.IRepositories;
+using MedLog.DAL.Repositories;
 using MedLog.Domain.Entities;
 using MedLog.Service.DTOs.FileDTOs;
 using MedLog.Service.IServices;
+using Microsoft.Extensions.Logging;
 
 namespace MedLog.Service.Services
 {
     public class FileService : IFileService
     {
         private readonly IFileRepository _fileRepository;
+        private readonly ILogger<FileService> _logger;
+        private readonly IMapper mapper;
 
-        public FileService(IFileRepository fileRepository)
+        public FileService(IFileRepository fileRepository, ILogger<FileService> logger, IMapper mapper)
         {
             _fileRepository = fileRepository;
-        }
-
-        public async Task<FileResultDto> UploadFileAsync(FileCreationDto fileCreationDto)
-        {
-            // Upload file to GridFS
-            var fileId = await _fileRepository.UploadFileAsync(fileCreationDto.FileStream, fileCreationDto.FileName);
-
-            // Create FileEntity
-            var fileEntity = new FileEntity
-            {
-                _id = fileId,
-                UserId = fileCreationDto.UserId,
-                FileName = fileCreationDto.FileName,
-                ContentType = fileCreationDto.ContentType,
-                Length = fileCreationDto.FileStream.Length,
-                CreatedAt = DateTime.UtcNow,
-            };
-
-            // Convert to FileResultDto
-            var fileResultDto = new FileResultDto
-            {
-                Id = fileEntity._id,
-                UserId = fileEntity.UserId,
-                FileName = fileEntity.FileName,
-                ContentType = fileEntity.ContentType,
-                Length = fileEntity.Length,
-                CreatedAt = fileEntity.CreatedAt,
-            };
-
-            return fileResultDto;
-        }
-
-        public async Task<FileResultDto> DownloadFileAsync(string id)
-        {
-            var fileStream = await _fileRepository.DownloadFileAsync(id);
-
-            // Assuming you have a way to retrieve file details from the database, you can do so here
-            // For now, we'll mock the details
-            var fileDetails = new FileEntity
-            {
-                _id = id,
-                FileName = "mockFileName",
-                ContentType = "application/pdf",
-                Length = fileStream.Length,
-                CreatedAt = DateTime.UtcNow,
-            };
-
-            // Convert to FileResultDto
-            var fileResultDto = new FileResultDto
-            {
-                Id = fileDetails._id,
-                UserId = fileDetails.UserId,
-                FileName = fileDetails.FileName,
-                ContentType = fileDetails.ContentType,
-                Length = fileDetails.Length,
-                CreatedAt = fileDetails.CreatedAt,
-            };
-
-            return fileResultDto;
+            _logger = logger;
+            this.mapper = mapper;
         }
 
         public async Task<bool> DeleteFileAsync(string id)
         {
-            await _fileRepository.DeleteFileAsync(id);
-            return true;
+            if (string.IsNullOrWhiteSpace(id))
+                throw new ArgumentException("File ID cannot be null or empty.", nameof(id));
+
+            try
+            {
+                await _fileRepository.DeleteFileAsync(id);
+                return true;
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("An error occured while deleting FIleId -> {id} ", id);
+                // Log exception (e.g., using a logging framework)
+                throw new ApplicationException("An error occurred while deleting the file.", ex);
+            }
         }
 
-        public FileResultDto UpdateFile(FileUpdateDto fileUpdateDto)
+        public async Task<FileResultDto> DownloadFileAsync(string id)
         {
-            // Assuming you have a way to retrieve and update file details in the database, you can do so here
-            // For now, we'll mock the update
-            var fileDetails =  new FileEntity
-            {
-                _id = fileUpdateDto.Id,
-                FileName = fileUpdateDto.FileName,
-                ContentType = fileUpdateDto.ContentType,
-                UserId = fileUpdateDto.UserId,
-            };
+            if (string.IsNullOrWhiteSpace(id))
+                throw new ArgumentException("File ID cannot be null or empty.", nameof(id));
 
-            // Convert to FileResultDto
-            var fileResultDto = new FileResultDto
+            try
             {
-                Id = fileDetails._id,
-                UserId = fileDetails.UserId,
-                FileName = fileDetails.FileName,
-                ContentType = fileDetails.ContentType,
-                Length = fileDetails.Length,
-                CreatedAt = fileDetails.CreatedAt,
-            };
+                var result =  await _fileRepository.DownloadFileAsync(id);
+                return mapper.Map<FileResultDto>(result);
+            }
+            catch (Exception ex)
+            {
+                // Log exception (e.g., using a logging framework)
+                throw new ApplicationException("An error occurred while downloading the file.", ex);
+            }
+        }
 
-            return fileResultDto;
+        public async Task<FileResultDto> UploadFileAsync(string userId, FileCreationDto fileCreationDto)
+        {
+            _logger.LogInformation("Starting file upload for user {UserId}", userId);
+
+            if (fileCreationDto.FileStream == null)
+            {
+                _logger.LogError("File stream is null for user {UserId}", userId);
+                throw new ArgumentNullException(nameof(fileCreationDto.FileStream), "File stream cannot be null.");
+            }
+
+            if (string.IsNullOrWhiteSpace(fileCreationDto.FileName))
+            {
+                _logger.LogError("File name is null or empty for user {UserId}", userId);
+                throw new ArgumentException("File name cannot be null or empty.", nameof(fileCreationDto.FileName));
+            }
+
+            if (string.IsNullOrWhiteSpace(fileCreationDto.ContentType))
+            {
+                _logger.LogError("Content type is null or empty for user {UserId}", userId);
+                throw new ArgumentException("Content type cannot be null or empty.", nameof(fileCreationDto.ContentType));
+            }
+
+            try
+            {
+                var file = mapper.Map<FileEntity>(fileCreationDto);
+                file.UserId = userId;
+                var result = await _fileRepository.UploadFileAsync(file);
+                return mapper.Map<FileResultDto>(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while uploading the file for user {UserId}", userId);
+                throw new ApplicationException("An error occurred while uploading the file.", ex);
+            }
         }
     }
 }
+
