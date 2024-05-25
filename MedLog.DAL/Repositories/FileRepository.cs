@@ -31,10 +31,30 @@ public class FileRepository : IFileRepository
         await fsBucket.DeleteAsync(objectId);
     }
 
+    //public async Task<FileEntity> DownloadFileAsync(string id)
+    //{
+    //    ObjectId objectId = new ObjectId(id);
+    //    var fileInfo = await fsBucket.Find(new BsonDocument("_id", id)).FirstOrDefaultAsync();
+    //    if (fileInfo == null)
+    //    {
+    //        throw new Exception("File is null or empty");
+    //    }
+    //    var stream = new MemoryStream();
+    //    await fsBucket.DownloadToStreamAsync(objectId, stream);
+    //    stream.Seek(0, SeekOrigin.Begin);
+    //    return new FileEntity
+    //    {
+    //        _id = id,
+    //        FileName = fileInfo.Filename,
+    //        ContentType = fileInfo.Metadata.GetValue("contentType", "application/octet-stream").AsString,
+    //        CreatedAt = fileInfo.UploadDateTime,
+    //        Content = stream
+    //    };
+    //}
     public async Task<FileEntity> DownloadFileAsync(string id)
     {
         ObjectId objectId = new ObjectId(id);
-        var fileInfo = await fsBucket.Find(new BsonDocument("_id", id)).FirstOrDefaultAsync();
+        var fileInfo = await fsBucket.Find(new BsonDocument("_id", objectId)).FirstOrDefaultAsync();
         if (fileInfo == null)
         {
             throw new Exception("File is null or empty");
@@ -45,12 +65,15 @@ public class FileRepository : IFileRepository
         return new FileEntity
         {
             _id = id,
+            UserId = fileInfo.Metadata.GetValue("userId", "").AsString,
+            Description = fileInfo.Metadata.GetValue("description", "").AsString,
             FileName = fileInfo.Filename,
             ContentType = fileInfo.Metadata.GetValue("contentType", "application/octet-stream").AsString,
             CreatedAt = fileInfo.UploadDateTime,
             Content = stream
         };
     }
+
 
     public async Task<FileEntity> UploadFileAsync(FileEntity file)
     {

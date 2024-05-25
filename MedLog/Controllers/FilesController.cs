@@ -48,62 +48,54 @@ namespace MedLog.API.Controllers
             }
         }
 
-        [HttpGet("{fileId}")]
-        public async Task<IActionResult> DownloadFile(string fileId)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> DownloadFile(string id)
         {
-            if (string.IsNullOrEmpty(fileId))
+            if (string.IsNullOrEmpty(id))
             {
                 return BadRequest("File ID is null or empty.");
             }
+
             try
             {
-                var file = await _fileService.DownloadFileAsync(fileId);
+                var file = await _fileService.DownloadFileAsync(id);
                 if (file == null || file.Content == null)
                 {
                     return NotFound("File not found.");
                 }
 
-                return File(file.Content, file.ContentType, file.FileName, file.CreatedAt);
+                Response.Headers.Add("X-User-ID", file.UserId);
+                Response.Headers.Add("X-Description", file.Description);
+
+                return File(file.Content, file.ContentType, file.FileName);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Failed to download file: {fileId}");
-                // Log the exception (not implemented here)
+                _logger.LogError(ex, $"Failed to download file: {id}");
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Error downloading file: {ex.Message}");
             }
         }
-        //{
-        //    
-
-        //    try
-        //    {
-        //        var fileDto = await _fileService.DownloadFileAsync(id);
-        //        if (fileDto == null || fileDto.Content == null)
-        //        {
-        //            return NotFound("File not found.");
-        //        }
-
-        //        // You can include any metadata properties you need in the FileResultDto
-        //        var resultDto = new FileResultDto
-        //        {
-
-        //            // Include other metadata properties as needed
-        //            Content = fileDto.Content,
-        //            ContentType = fileDto.ContentType,
-        //            FileName = fileDto.FileName
-
-        //        };
-
-        //        return Ok(resultDto); // Return the DTO object containing both the file content and metadata
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // Log the exception (not implemented here)
-        //        return StatusCode(StatusCodes.Status500InternalServerError, $"Error downloading file: {ex.Message}");
-        //    }
-        //}
 
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteFile(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return BadRequest("File ID is null or empty.");
+            }
+
+            try
+            {
+                await _fileService.DeleteFileAsync(id);
+                return Ok(new { Message = "File deleted successfully." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in file deleting");
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error deleting file: {ex.Message}");
+            }
+        }
 
 
 

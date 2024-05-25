@@ -38,8 +38,7 @@ namespace MedLog.Service.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError("An error occured while deleting FIleId -> {id} ", id);
-                // Log exception (e.g., using a logging framework)
+                _logger.LogError("An error occured while deleting FileId -> {id} ", id);
                 throw new ApplicationException("An error occurred while deleting the file.", ex);
             }
         }
@@ -51,16 +50,16 @@ namespace MedLog.Service.Services
 
             try
             {
-                var result =  await _fileRepository.DownloadFileAsync(id);
+                var result = await _fileRepository.DownloadFileAsync(id);
                 return mapper.Map<FileResultDto>(result);
             }
             catch (Exception ex)
             {
-                
-                // Log exception (e.g., using a logging framework)
+                _logger.LogError(ex.Message, ex);
                 throw new ApplicationException("An error occurred while downloading the file.", ex);
             }
         }
+
 
         public async Task<FileResultDto> UploadFileAsync(string userId, FileCreationDto fileCreationDto)
         {
