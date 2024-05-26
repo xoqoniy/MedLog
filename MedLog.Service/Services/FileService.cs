@@ -102,6 +102,24 @@ namespace MedLog.Service.Services
                 throw new ApplicationException("An error occurred while uploading the file.", ex);
             }
         }
+        public async Task<List<FileResultDto>> GetFilesByUserIdAsync(string userId)
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+                throw new ArgumentException("User ID cannot be null or empty.", nameof(userId));
+
+            try
+            {
+                var files = await _fileRepository.GetFilesByUserIdAsync(userId);
+                return mapper.Map<List<FileResultDto>>(files);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Getting files by UserId {userId} went wrong",userId,ex.Message);
+                // Log exception (e.g., using a logging framework)
+                throw new ApplicationException("An error occurred while fetching files.", ex);
+            }
+        }
+
     }
 }
 

@@ -81,7 +81,7 @@ public class FileRepository : IFileRepository
         {
             Metadata = new BsonDocument
             {
-
+                    { "userId", file.UserId },
                     { "filename" , file.FileName },
                     { "contentType", file.ContentType },
                     { "description", file.Description}
@@ -99,5 +99,29 @@ public class FileRepository : IFileRepository
         };
         
     }
+
+    public async Task<List<FileEntity>> GetFilesByUserIdAsync(string userId)
+    {
+        var filter = Builders<GridFSFileInfo>.Filter.Eq("metadata.userId", userId);
+        var files = await fsBucket.Find(filter).ToListAsync();
+
+        var fileEntities = new List<FileEntity>();
+        foreach (var fileInfo in files)
+        {
+            fileEntities.Add(new FileEntity
+            {
+                _id = fileInfo.Id.ToString(),
+                UserId = userId,
+                Description = fileInfo.Metadata.GetValue("description", "").AsString,
+                FileName = fileInfo.Filename,
+                ContentType = fileInfo.Metadata.GetValue("contentType", "application/octet-stream").AsString,
+                CreatedAt = fileInfo.UploadDateTime,
+                Content = null // We are not fetching the content for this method
+            });
+        }
+
+        return fileEntities;
+    }
+
 
 }

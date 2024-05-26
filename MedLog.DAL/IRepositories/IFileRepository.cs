@@ -9,5 +9,6 @@ namespace MedLog.DAL.IRepositories
         Task<FileEntity> UploadFileAsync(FileEntity file);
         Task<FileEntity> DownloadFileAsync(string id);
         Task DeleteFileAsync(string id);
+        Task<List<FileEntity>> GetFilesByUserIdAsync(string userId);
     }
 }

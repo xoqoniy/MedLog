@@ -97,6 +97,30 @@ namespace MedLog.API.Controllers
             }
         }
 
+        [HttpGet("user/{userId}/files")]
+        public async Task<IActionResult> GetFilesByUserId(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest("User ID is null or empty.");
+            }
+
+            try
+            {
+                var files = await _fileService.GetFilesByUserIdAsync(userId);
+                if (files == null || !files.Any())
+                {
+                    return NotFound("No files found for the user.");
+                }
+
+                return Ok(files);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Failed to fetch files for user: {userId}");
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error fetching files: {ex.Message}");
+            }
+        }
 
 
     }
