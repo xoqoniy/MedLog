@@ -21,8 +21,4 @@
     <ProjectReference Include="..\MedLog.Service\MedLog.Service.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Logs\" />
-  </ItemGroup>
-
 </Project>
