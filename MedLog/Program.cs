@@ -13,74 +13,89 @@ internal class Program
 {
     private static void Main(string[] args)
     {
-        var builder = WebApplication.CreateBuilder(args);
-        //Configuration of User secrets for database connection string
-        builder.Configuration.AddJsonFile("secrets.json", optional: true, reloadOnChange: true);
-
-        //MongoDb Database Configuration
-
-        builder.Services.AddControllers(options =>
-        {
-            options.SuppressAsyncSuffixInActionNames = false;
-        });
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
-        
-        //Registering Services
-        builder.Services.AddCustomServices();// Register MongoDB settings
-        builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDbSettings"));
-
-        // Register MongoDB client and database
-        builder.Services.AddSingleton<IMongoClient, MongoClient>(sp =>
-        {
-            var settings = sp.GetRequiredService<IOptions<MongoDbSettings>>().Value;
-            return new MongoClient(settings.ConnectionStringURL);
-        });
-
-        builder.Services.AddScoped(sp =>
-        {
-            var client = sp.GetRequiredService<IMongoClient>();
-            var settings = sp.GetRequiredService<IOptions<MongoDbSettings>>().Value;
-            return client.GetDatabase(settings.DatabaseName);
-        });
-
-        var configuration = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json")
-            .Build();
-
-        var logger = new LoggerConfiguration()
-            .ReadFrom.Configuration(configuration)
-            //.Enrich.FromLogContext()
+        // Configure Serilog at the very beginning
+        Log.Logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .Build())
+            .Enrich.FromLogContext()
             .CreateLogger();
-       // builder.Logging.ClearProviders();
-        builder.Logging.AddSerilog(logger);
-
-
-        //Cors
-        builder.Services.AddCors(options =>
+        try
         {
-            options.AddPolicy("MyCors", builder =>
+            Log.Information("Starting up the application");
+            var builder = WebApplication.CreateBuilder(args);
+            //Configuration of User secrets for database connection string
+            builder.Configuration.AddJsonFile("secrets.json", optional: true, reloadOnChange: true);
+
+            builder.Services.AddControllers(options =>
             {
-                builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                options.SuppressAsyncSuffixInActionNames = false;
             });
-        });
+            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
 
-        
-        builder.Services.AddAutoMapper(typeof(MapperProfile));
-        var app = builder.Build();
+            //Registering Services
+            builder.Services.AddCustomServices();
+            // Register MongoDB settings
+            builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDbSettings"));
 
-        // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
+            // Register MongoDB client and database
+            builder.Services.AddSingleton<IMongoClient, MongoClient>(sp =>
+            {
+                var settings = sp.GetRequiredService<IOptions<MongoDbSettings>>().Value;
+                return new MongoClient(settings.ConnectionStringURL);
+            });
+
+            builder.Services.AddScoped(sp =>
+            {
+                var client = sp.GetRequiredService<IMongoClient>();
+                var settings = sp.GetRequiredService<IOptions<MongoDbSettings>>().Value;
+                return client.GetDatabase(settings.DatabaseName);
+            });
+
+            var configuration = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .Build();
+
+            //Adding Serilog - Logging 
+            builder.Logging.AddSerilog(Log.Logger);
+
+
+            //Cors
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("MyCors", builder =>
+                {
+                    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                });
+            });
+
+
+            builder.Services.AddAutoMapper(typeof(MapperProfile));
+            var app = builder.Build();
+
+            // Configure the HTTP request pipeline.
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
+
+            app.UseHttpsRedirection();
+            app.UseAuthorization();
+            app.MapControllers();
+
+            app.Run();
+        }
+        catch(Exception ex)
         {
-            app.UseSwagger();
-            app.UseSwaggerUI();
+            Log.Fatal(ex, "Application start-up failed");
+        }
+        finally
+        {
+            Log.CloseAndFlush();
         }
 
-        app.UseHttpsRedirection();
-        app.UseAuthorization();
-        app.MapControllers();
-
-        app.Run();
     }
 }
