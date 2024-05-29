@@ -18,7 +18,7 @@ namespace MedLog.API.Controllers
         }
 
         [HttpPost("upload")]
-        public async Task<IActionResult> UploadFile(string userId, IFormFile file, string description)
+        public async Task<IActionResult> UploadFile([FromForm]string userId, IFormFile file, [FromForm]string description)
         {
             if (file == null || file.Length == 0)
             {
