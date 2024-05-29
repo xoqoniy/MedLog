@@ -18,26 +18,26 @@ namespace MedLog.API.Controllers
         }
 
         [HttpPost("upload")]
-        public async Task<IActionResult> UploadFile([FromForm]string userId, IFormFile file, [FromForm]string description)
+        public async Task<IActionResult> UploadFile([FromForm]FileCreationDto dto)
         {
-            if (file == null || file.Length == 0)
+            if (dto == null || dto.Content.Length == 0)
             {
                 return BadRequest("File is null or empty.");
             }
 
             try
             {
-                using var stream = file.OpenReadStream();
+                using var stream = dto.Content.OpenReadStream();
 
-                var fileCreationDto = new FileCreationDto
-                {
-                    FileName = file.FileName,
-                    Description = description, // Assuming Description is optional and not passed here
-                    ContentType = file.ContentType,
-                    Content = stream // Assuming FileStream is the property for the file content stream in FileCreationDto
-                };
+                //var fileCreationDto = new FileCreationDto
+                //{
+                //    FileName = dto.Content.FileName,
+                //    Description = dto.Descriptiondescription, // Assuming Description is optional and not passed here
+                //    ContentType = file.ContentType,
+                //    Content = stream // Assuming FileStream is the property for the file content stream in FileCreationDto
+                //};
 
-                var uploadedFile = await _fileService.UploadFileAsync(userId, fileCreationDto);
+                var uploadedFile = await _fileService.UploadFileAsync(dto);
                 return Ok(new { FileId = uploadedFile._id, FileName = uploadedFile.FileName });
 
             }

@@ -5,7 +5,7 @@ namespace MedLog.Service.IServices
 {
     public interface IFileService
     {
-        Task<FileResultDto> UploadFileAsync(string userId, FileCreationDto fileCreationDto);
+        Task<FileResultDto> UploadFileAsync(FileCreationDto fileCreationDto);
         Task<FileResultDto> DownloadFileAsync(string id);
         Task<bool> DeleteFileAsync(string id);
         Task<List<FileResultDto>> GetFilesByUserIdAsync(string userId);

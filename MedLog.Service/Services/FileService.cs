@@ -61,47 +61,40 @@ namespace MedLog.Service.Services
         }
 
 
-        public async Task<FileResultDto> UploadFileAsync(string userId, FileCreationDto fileCreationDto)
+        public async Task<FileResultDto> UploadFileAsync(FileCreationDto fileCreationDto)
         {
-            _logger.LogInformation("Starting file upload for user {UserId}", userId);
+            _logger.LogInformation("Starting file upload for user {UserId}", fileCreationDto.UserId);
 
             if (fileCreationDto.Content == null)
             {
-                _logger.LogError("File stream is null for user {UserId}", userId);
+                _logger.LogError("File stream is null for user {UserId}", fileCreationDto.UserId);
                 throw new ArgumentNullException(nameof(fileCreationDto.Content), "File stream cannot be null.");
-            }
-
-            // Check if the stream position is not at the beginning, then set it to the beginning
-            if (fileCreationDto.Content.Position != 0)
-            {
-                fileCreationDto.Content.Seek(0, SeekOrigin.Begin);
-            }
-
-            if (string.IsNullOrWhiteSpace(fileCreationDto.FileName))
-            {
-                _logger.LogError("File name is null or empty for user {UserId}", userId);
-                throw new ArgumentException("File name cannot be null or empty.", nameof(fileCreationDto.FileName));
-            }
-
-            if (string.IsNullOrWhiteSpace(fileCreationDto.ContentType))
-            {
-                _logger.LogError("Content type is null or empty for user {UserId}", userId);
-                throw new ArgumentException("Content type cannot be null or empty.", nameof(fileCreationDto.ContentType));
             }
 
             try
             {
-                var file = mapper.Map<FileEntity>(fileCreationDto);
-                file.UserId = userId;
-                var result = await _fileRepository.UploadFileAsync(file);
+                using var stream = new MemoryStream();
+                await fileCreationDto.Content.CopyToAsync(stream);
+
+                var fileEntity = new FileEntity
+                {
+                    UserId = fileCreationDto.UserId,
+                    FileName = fileCreationDto.Content.FileName,
+                    ContentType = fileCreationDto.Content.ContentType,
+                    Content = stream, // Assuming FileEntity stores content as byte array
+                    Description = fileCreationDto.Description
+                };
+
+                var result = await _fileRepository.UploadFileAsync(fileEntity);
                 return mapper.Map<FileResultDto>(result);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while uploading the file for user {UserId}", userId);
+                _logger.LogError(ex, "An error occurred while uploading the file for user {UserId}", fileCreationDto.UserId);
                 throw new ApplicationException("An error occurred while uploading the file.", ex);
             }
         }
+
         public async Task<List<FileResultDto>> GetFilesByUserIdAsync(string userId)
         {
             if (string.IsNullOrWhiteSpace(userId))
