@@ -40,7 +40,7 @@ public class Repository<T> : IRepository<T> where T : Auditable
     }
 
     // Method to determine the collection name based on the entity type T
-    static string GetCollectionName<T>(IOptions<MongoDbSettings> mongodbSettings)
+    static string GetCollectionName<TEntity>(IOptions<MongoDbSettings> mongodbSettings)
     {
         // Use the type of T to determine the appropriate collection name
         return typeof(T) switch
