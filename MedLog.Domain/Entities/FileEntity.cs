@@ -1,12 +1,6 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Bson;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MedLog.Domain.Common;
+﻿using MedLog.Domain.Common;
 
+#pragma warning disable
 namespace MedLog.Domain.Entities;
 
 public class FileEntity : Auditable

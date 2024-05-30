@@ -24,28 +24,10 @@ namespace MedLog.API.Controllers
             {
                 return BadRequest("File is null or empty.");
             }
+            using var stream = dto.Content.OpenReadStream();
 
-            try
-            {
-                using var stream = dto.Content.OpenReadStream();
-
-                //var fileCreationDto = new FileCreationDto
-                //{
-                //    FileName = dto.Content.FileName,
-                //    Description = dto.Descriptiondescription, // Assuming Description is optional and not passed here
-                //    ContentType = file.ContentType,
-                //    Content = stream // Assuming FileStream is the property for the file content stream in FileCreationDto
-                //};
-
-                var uploadedFile = await _fileService.UploadFileAsync(dto);
-                return Ok(new { FileId = uploadedFile._id, FileName = uploadedFile.FileName });
-
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error uploading file");
-                return StatusCode(StatusCodes.Status500InternalServerError, $"Error uploading file: {ex.Message}");
-            }
+            var uploadedFile = await _fileService.UploadFileAsync(dto);
+            return Ok(new { FileId = uploadedFile._id, FileName = uploadedFile.FileName });
         }
 
         [HttpGet("{id}")]
@@ -56,24 +38,16 @@ namespace MedLog.API.Controllers
                 return BadRequest("File ID is null or empty.");
             }
 
-            try
+            var file = await _fileService.DownloadFileAsync(id);
+            if (file == null || file.Content == null)
             {
-                var file = await _fileService.DownloadFileAsync(id);
-                if (file == null || file.Content == null)
-                {
-                    return NotFound("File not found.");
-                }
-
-                Response.Headers.Add("X-User-ID", file.UserId);
-                Response.Headers.Add("X-Description", file.Description);
-
-                return File(file.Content, file.ContentType, file.FileName);
+                return NotFound("File not found.");
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Failed to download file: {id}");
-                return StatusCode(StatusCodes.Status500InternalServerError, $"Error downloading file: {ex.Message}");
-            }
+
+            Response.Headers.Add("X-User-ID", file.UserId);
+            Response.Headers.Add("X-Description", file.Description);
+
+            return File(file.Content, file.ContentType, file.FileName);
         }
 
 
@@ -85,16 +59,8 @@ namespace MedLog.API.Controllers
                 return BadRequest("File ID is null or empty.");
             }
 
-            try
-            {
-                await _fileService.DeleteFileAsync(id);
-                return Ok(new { Message = "File deleted successfully." });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error in file deleting");
-                return StatusCode(StatusCodes.Status500InternalServerError, $"Error deleting file: {ex.Message}");
-            }
+            await _fileService.DeleteFileAsync(id);
+            return Ok(new { Message = "File deleted successfully." });
         }
 
         [HttpGet("user/{userId}/files")]
@@ -105,21 +71,13 @@ namespace MedLog.API.Controllers
                 return BadRequest("User ID is null or empty.");
             }
 
-            try
+            var files = await _fileService.GetFilesByUserIdAsync(userId);
+            if (files == null || !files.Any())
             {
-                var files = await _fileService.GetFilesByUserIdAsync(userId);
-                if (files == null || !files.Any())
-                {
-                    return NotFound("No files found for the user.");
-                }
+                return NotFound("No files found for the user.");
+            }
 
-                return Ok(files);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Failed to fetch files for user: {userId}");
-                return StatusCode(StatusCodes.Status500InternalServerError, $"Error fetching files: {ex.Message}");
-            }
+            return Ok(files);
         }
 
 

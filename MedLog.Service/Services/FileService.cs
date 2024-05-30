@@ -30,17 +30,9 @@ namespace MedLog.Service.Services
             if (string.IsNullOrWhiteSpace(id))
                 throw new ArgumentException("File ID cannot be null or empty.", nameof(id));
 
-            try
-            {
-                await _fileRepository.DeleteFileAsync(id);
-                return true;
+            await _fileRepository.DeleteFileAsync(id);
+            return true;
 
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("An error occured while deleting FileId -> {id} ", id);
-                throw new ApplicationException("An error occurred while deleting the file.", ex);
-            }
         }
 
         public async Task<FileResultDto> DownloadFileAsync(string id)
@@ -48,16 +40,8 @@ namespace MedLog.Service.Services
             if (string.IsNullOrWhiteSpace(id))
                 throw new ArgumentException("File ID cannot be null or empty.", nameof(id));
 
-            try
-            {
-                var result = await _fileRepository.DownloadFileAsync(id);
-                return mapper.Map<FileResultDto>(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message, ex);
-                throw new ApplicationException("An error occurred while downloading the file.", ex);
-            }
+            var result = await _fileRepository.DownloadFileAsync(id);
+            return mapper.Map<FileResultDto>(result);
         }
 
 
@@ -71,28 +55,20 @@ namespace MedLog.Service.Services
                 throw new ArgumentNullException(nameof(fileCreationDto.Content), "File stream cannot be null.");
             }
 
-            try
-            {
-                using var stream = new MemoryStream();
-                await fileCreationDto.Content.CopyToAsync(stream);
+            using var stream = new MemoryStream();
+            await fileCreationDto.Content.CopyToAsync(stream);
 
-                var fileEntity = new FileEntity
-                {
-                    UserId = fileCreationDto.UserId,
-                    FileName = fileCreationDto.Content.FileName,
-                    ContentType = fileCreationDto.Content.ContentType,
-                    Content = stream, // Assuming FileEntity stores content as byte array
-                    Description = fileCreationDto.Description
-                };
-
-                var result = await _fileRepository.UploadFileAsync(fileEntity);
-                return mapper.Map<FileResultDto>(result);
-            }
-            catch (Exception ex)
+            var fileEntity = new FileEntity
             {
-                _logger.LogError(ex, "An error occurred while uploading the file for user {UserId}", fileCreationDto.UserId);
-                throw new ApplicationException("An error occurred while uploading the file.", ex);
-            }
+                UserId = fileCreationDto.UserId,
+                FileName = fileCreationDto.Content.FileName,
+                ContentType = fileCreationDto.Content.ContentType,
+                Content = stream, // Assuming FileEntity stores content as byte array
+                Description = fileCreationDto.Description
+            };
+
+            var result = await _fileRepository.UploadFileAsync(fileEntity);
+            return mapper.Map<FileResultDto>(result);
         }
 
         public async Task<List<FileResultDto>> GetFilesByUserIdAsync(string userId)
@@ -100,17 +76,10 @@ namespace MedLog.Service.Services
             if (string.IsNullOrWhiteSpace(userId))
                 throw new ArgumentException("User ID cannot be null or empty.", nameof(userId));
 
-            try
-            {
-                var files = await _fileRepository.GetFilesByUserIdAsync(userId);
-                return mapper.Map<List<FileResultDto>>(files);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Getting files by UserId {userId} went wrong",userId,ex.Message);
-                // Log exception (e.g., using a logging framework)
-                throw new ApplicationException("An error occurred while fetching files.", ex);
-            }
+
+            var files = await _fileRepository.GetFilesByUserIdAsync(userId);
+            return mapper.Map<List<FileResultDto>>(files);
+
         }
 
     }

@@ -31,104 +31,76 @@ public class UserService : IUserService
 
     public async Task<UserResultDto> CreatePatientAsync(UserCreationDto userDto, string selectedHospitalId)
     {
-        try
-        {
-            // Generate an ObjectId for the address if needed
-            string addressId = ObjectId.GenerateNewId().ToString();
+        // Generate an ObjectId for the address if needed
+        string addressId = ObjectId.GenerateNewId().ToString();
 
-            // Map the UserCreationDto to User entity
-            var newUser = mapper.Map<User>(userDto);
+        // Map the UserCreationDto to User entity
+        var newUser = mapper.Map<User>(userDto);
 
-            // Assign the generated address ID to the address
-            newUser.Address._id = addressId;
+        // Assign the generated address ID to the address
+        newUser.Address._id = addressId;
 
-            // Assign the selected hospital ID to the user's HospitalId property
-            newUser.HospitalId = selectedHospitalId;
+        // Assign the selected hospital ID to the user's HospitalId property
+        newUser.HospitalId = selectedHospitalId;
 
-            // Save the User to obtain its ID
-            await repository.InsertAsync(newUser);
-            
-            // Retrieve the hospital entity by its ID
-            await hospitalService.AddUserIdToHospital(selectedHospitalId, newUser._id);
+        // Save the User to obtain its ID
+        await repository.InsertAsync(newUser);
 
-            // Map the created user to UserResultDto
-            return mapper.Map<UserResultDto>(newUser);
-
-        }
-        catch (Exception ex)
-        {
-            // Handle any exceptions
-            throw new MedLogException(500, $"Failed to create user -> {ex.Message}");
-        }
+        // Retrieve the hospital entity by its ID
+        await hospitalService.AddUserIdToHospital(selectedHospitalId, newUser._id);
+        
+        // Map the created user to UserResultDto
+        return mapper.Map<UserResultDto>(newUser);
     }
 
     public async Task<UserResultDto> CreateDoctorAsync(DoctorCreationDto dto, string selectedHospitalId)
     {
-        try
-        {
-            // Generate an ObjectId for the address if needed
-            string addressId = ObjectId.GenerateNewId().ToString();
+        // Generate an ObjectId for the address if needed
+        string addressId = ObjectId.GenerateNewId().ToString();
 
-            // Map the UserCreationDto to User entity
-            var newUser = mapper.Map<User>(dto);
+        // Map the UserCreationDto to User entity
+        var newUser = mapper.Map<User>(dto);
 
-            // Assign the generated address ID to the address
-            newUser.Address._id = addressId;
-            newUser.UserRole = Role.Doctor;
+        // Assign the generated address ID to the address
+        newUser.Address._id = addressId;
+        newUser.UserRole = Role.Doctor;
 
-            // Assign the selected hospital ID to the user's HospitalId property
-            newUser.HospitalId = selectedHospitalId;
+        // Assign the selected hospital ID to the user's HospitalId property
+        newUser.HospitalId = selectedHospitalId;
 
-            // Save the User to obtain its ID
-            await repository.InsertAsync(newUser);
+        // Save the User to obtain its ID
+        await repository.InsertAsync(newUser);
 
-            // Retrieve the hospital entity by its ID
-            await hospitalService.AddUserIdToHospital(selectedHospitalId, newUser._id);
+        await hospitalService.AddUserIdToHospital(selectedHospitalId, newUser._id);
+        // Map the created user to UserResultDto
+        return mapper.Map<UserResultDto>(newUser);
 
-            // Map the created user to UserResultDto
-            return mapper.Map<UserResultDto>(newUser);
-
-        }
-        catch (Exception ex)
-        {
-            // Handle any exceptions
-            throw new MedLogException(500, $"Failed to create user -> {ex.Message}");
-        }
     }
 
     public async Task<UserResultDto> CreateNurseAsync(NurseCreationDto dto, string selectedHospitalId)
     {
-        try
-        {
-            // Generate an ObjectId for the address if needed
-            string addressId = ObjectId.GenerateNewId().ToString();
+        // Generate an ObjectId for the address if needed
+        string addressId = ObjectId.GenerateNewId().ToString();
 
-            // Map the UserCreationDto to User entity
-            var newUser = mapper.Map<User>(dto);
+        // Map the UserCreationDto to User entity
+        var newUser = mapper.Map<User>(dto);
 
-            // Assign the generated address ID to the address
-            newUser.Address._id = addressId;
+        // Assign the generated address ID to the address
+        newUser.Address._id = addressId;
 
-            newUser.UserRole= Role.Nurse;
+        newUser.UserRole = Role.Nurse;
 
-            // Assign the selected hospital ID to the user's HospitalId property
-            newUser.HospitalId = selectedHospitalId;
+        // Assign the selected hospital ID to the user's HospitalId property
+        newUser.HospitalId = selectedHospitalId;
 
-            // Save the User to obtain its ID
-            await repository.InsertAsync(newUser);
+        // Save the User to obtain its ID
+        await repository.InsertAsync(newUser);
 
-            // Retrieve the hospital entity by its ID
-            await hospitalService.AddUserIdToHospital(selectedHospitalId, newUser._id);
+        // Retrieve the hospital entity by its ID
+        await hospitalService.AddUserIdToHospital(selectedHospitalId, newUser._id);
 
-            // Map the created user to UserResultDto
-            return mapper.Map<UserResultDto>(newUser);
-
-        }
-        catch (Exception ex)
-        {
-            // Handle any exceptions
-            throw new MedLogException(500, $"Failed to create user -> {ex.Message}");
-        }
+        // Map the created user to UserResultDto
+        return mapper.Map<UserResultDto>(newUser);
     }
 
     public async Task<bool> DeleteAsync(string id)
@@ -151,118 +123,75 @@ public class UserService : IUserService
 
     public async Task<List<UserResultDto>> GetAllAsync()
     {
-        try
-        {
-            var users = await repository.RetrieveAllAsync();
-            return mapper.Map<List<UserResultDto>>(users);
-        }
-        catch(Exception ex)
-        {
-            throw new MedLogException(404, "Couldn't retrive the users " + ex.Message);
-        }
+        var users = await repository.RetrieveAllAsync();
+        return mapper.Map<List<UserResultDto>>(users);
     }
 
     public async Task<UserResultDto> GetAsync(string id)
     {
-        try
-        {
-            var user = await repository.RetrieveByIdAsync(id);
-            return mapper.Map<UserResultDto>(user);
-        }
-        catch(Exception ex)
-        {
-            throw new MedLogException(403, $"User couldn't be found -> {ex.Message}");
-        }
+        var user = await repository.RetrieveByIdAsync(id);
+        return mapper.Map<UserResultDto>(user);
     }
 
 
     public async Task<List<UserResultDto>> GetNursesByHospitalId (string hospitalId)
     {
-        try
-        {
-            var nurses = await repository.RetrieveByExpressionAsync(u =>
+        var nurses = await repository.RetrieveByExpressionAsync(u =>
                 u.UserRole == Role.Nurse && u.HospitalId == hospitalId);
-            return mapper.Map<List<UserResultDto>>(nurses);
-        }
-        catch(Exception ex)
-        {
-            throw new MedLogException(403, "NurseRetrievingByHospitalId -> " + ex.Message);
-        }
+        return mapper.Map<List<UserResultDto>>(nurses);
     }
     public async Task<List<DoctorDto>> GetDoctorsByHospitalId(string hospitalId)
     {
-        try
-        {
-            var doctors = await repository.RetrieveByExpressionAsync(u =>
-                u.UserRole == Role.Doctor && u.HospitalId == hospitalId);
+        var doctors = await repository.RetrieveByExpressionAsync(u =>
+                        u.UserRole == Role.Doctor && u.HospitalId == hospitalId);
 
-            var doctorDtos = doctors.Select(d => new DoctorDto
-            {
-                Id = d._id,
-                FullName = $"{d.FirstName} {d.LastName}",
-                Specialization = d.Specialization
-            }).ToList();
-            return doctorDtos;
-        }
-        catch(Exception ex)
+        var doctorDtos = doctors.Select(d => new DoctorDto
         {
-            throw new MedLogException(402, ex.Message);
-        }
+            Id = d._id,
+            FullName = $"{d.FirstName} {d.LastName}",
+            Specialization = d.Specialization
+        }).ToList();
+        return doctorDtos;
     }
 
     public async Task<UserResultDto> UpdateAsync(string id, UserUpdateDto dto)
     {
-        try
-        {
-            var user = await repository.RetrieveByIdAsync(id);
+        var user = await repository.RetrieveByIdAsync(id);
 
-            if (user is null)
-                throw new MedLogException(404, "User not found");
+        if (user is null)
+            throw new MedLogException(404, "User not found");
 
 
-            // Map the properties from the update DTO to the existing user
-            mapper.Map(dto, user);
+        // Map the properties from the update DTO to the existing user
+        mapper.Map(dto, user);
 
-            // Update additional properties if needed
+        // Update additional properties if needed
 
-            user.LastUpdatedAt = DateTime.UtcNow;
+        user.LastUpdatedAt = DateTime.UtcNow;
 
-            // Perform server-side validation if needed
+        // Perform server-side validation if needed
 
-            // Update the user
-            await repository.ReplaceByIdAsync(user);
+        // Update the user
+        await repository.ReplaceByIdAsync(user);
 
-            // Return the updated user DTO
-            return mapper.Map<UserResultDto>(user);
-        }
-        catch(Exception ex)
-        {
-            throw new MedLogException(500, "Couldn't update the user" + ex.Message);
-        }
+        // Return the updated user DTO
+        return mapper.Map<UserResultDto>(user);
     }
 
     public async Task<bool> IsDoctorAvailableAtTimeAsync(DateTime appointmentDateTime, string doctorId)
     {
-        try
-        {
-            // Define the end time for the time window (e.g., 10 minutes after the chosen appointment time)
-            DateTime endTime = appointmentDateTime.AddMinutes(10);
+        // Define the end time for the time window (e.g., 10 minutes after the chosen appointment time)
+        DateTime endTime = appointmentDateTime.AddMinutes(10);
 
-            // Query the doctor's appointments within the specified time window
-            var overlappingAppointments = await appointmentrepo.RetrieveByExpressionAsync(appointment =>
-                appointment.DoctorId == doctorId &&
-                appointment.AppointmentDateTime < endTime &&
-                appointment.AppointmentDateTime >= appointmentDateTime &&
-                appointment.IsConfirmed);
+        // Query the doctor's appointments within the specified time window
+        var overlappingAppointments = await appointmentrepo.RetrieveByExpressionAsync(appointment =>
+            appointment.DoctorId == doctorId &&
+            appointment.AppointmentDateTime < endTime &&
+            appointment.AppointmentDateTime >= appointmentDateTime &&
+            appointment.IsConfirmed);
 
-            // Check if any overlapping appointments are found
-            return !overlappingAppointments.Any();
-
-        }
-        catch(Exception ex)
-        {
-            throw new MedLogException(500, ex.Message);
-        }
+        // Check if any overlapping appointments are found
+        return !overlappingAppointments.Any();
     }
 
 

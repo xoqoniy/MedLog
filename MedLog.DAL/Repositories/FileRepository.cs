@@ -31,26 +31,6 @@ public class FileRepository : IFileRepository
         await fsBucket.DeleteAsync(objectId);
     }
 
-    //public async Task<FileEntity> DownloadFileAsync(string id)
-    //{
-    //    ObjectId objectId = new ObjectId(id);
-    //    var fileInfo = await fsBucket.Find(new BsonDocument("_id", id)).FirstOrDefaultAsync();
-    //    if (fileInfo == null)
-    //    {
-    //        throw new Exception("File is null or empty");
-    //    }
-    //    var stream = new MemoryStream();
-    //    await fsBucket.DownloadToStreamAsync(objectId, stream);
-    //    stream.Seek(0, SeekOrigin.Begin);
-    //    return new FileEntity
-    //    {
-    //        _id = id,
-    //        FileName = fileInfo.Filename,
-    //        ContentType = fileInfo.Metadata.GetValue("contentType", "application/octet-stream").AsString,
-    //        CreatedAt = fileInfo.UploadDateTime,
-    //        Content = stream
-    //    };
-    //}
     public async Task<FileEntity> DownloadFileAsync(string id)
     {
         ObjectId objectId = new ObjectId(id);
@@ -116,8 +96,8 @@ public class FileRepository : IFileRepository
                 FileName = fileInfo.Filename,
                 ContentType = fileInfo.Metadata.GetValue("contentType", "application/octet-stream").AsString,
                 CreatedAt = fileInfo.UploadDateTime,
-                Content = null // We are not fetching the content for this method
-            });
+                Content = Stream.Null // We are not fetching the content for this method
+            }) ;
         }
 
         return fileEntities;
