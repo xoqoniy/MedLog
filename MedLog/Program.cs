@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Serilog;
 using Microsoft.OpenApi.Models;
+using MedLog.Middlewares;
 internal class Program
 {
     private static void Main(string[] args)
@@ -81,8 +82,8 @@ internal class Program
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
             app.UseHttpsRedirection();
+            app.UseMiddleware<ExceptionHandlerMiddleware>();
             app.UseAuthorization();
             app.MapControllers();
 
