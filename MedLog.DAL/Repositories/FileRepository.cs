@@ -37,12 +37,14 @@ public class FileRepository : IFileRepository
         var fileInfo = await fsBucket.Find(new BsonDocument("_id", objectId)).FirstOrDefaultAsync();
         if (fileInfo == null)
         {
-            throw new Exception("File is null or empty");
+            throw new Exception("File not found.");
         }
+
         var stream = new MemoryStream();
         await fsBucket.DownloadToStreamAsync(objectId, stream);
         stream.Seek(0, SeekOrigin.Begin);
-        return new FileEntity
+
+        var fileEntity = new FileEntity
         {
             _id = id,
             UserId = fileInfo.Metadata.GetValue("userId", "").AsString,
@@ -50,9 +52,13 @@ public class FileRepository : IFileRepository
             FileName = fileInfo.Filename,
             ContentType = fileInfo.Metadata.GetValue("contentType", "application/octet-stream").AsString,
             CreatedAt = fileInfo.UploadDateTime,
-            Content = stream
+            Content = stream,
         };
+
+
+        return fileEntity;
     }
+
 
 
     public async Task<FileEntity> UploadFileAsync(FileEntity file)
@@ -96,7 +102,7 @@ public class FileRepository : IFileRepository
                 FileName = fileInfo.Filename,
                 ContentType = fileInfo.Metadata.GetValue("contentType", "application/octet-stream").AsString,
                 CreatedAt = fileInfo.UploadDateTime,
-                Content = Stream.Null // We are not fetching the content for this method
+                Content = null // We are not fetching the content for this method
             }) ;
         }
 

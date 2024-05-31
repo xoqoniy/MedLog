@@ -1,4 +1,5 @@
 ﻿using MedLog.Service.DTOs.FileDTOs;
+using MedLog.Service.Exceptions;
 using MedLog.Service.IServices;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Razor.TagHelpers;
@@ -38,16 +39,24 @@ namespace MedLog.API.Controllers
                 return BadRequest("File ID is null or empty.");
             }
 
-            var file = await _fileService.DownloadFileAsync(id);
-            if (file == null || file.Content == null)
+            try
             {
-                return NotFound("File not found.");
+                var file = await _fileService.DownloadFileAsync(id);
+                if (file == null || file.Content == null)
+                {
+                    return NotFound("File not found.");
+                }
+
+                Response.Headers.Add("X-User-ID", file.UserId);
+                Response.Headers.Add("X-Description", file.Description);
+                //return File(file.Content, file.ContentType, file.FileName);
+                return File(file.Content, file.ContentType, file.FileName);
             }
-
-            Response.Headers.Add("X-User-ID", file.UserId);
-            Response.Headers.Add("X-Description", file.Description);
-
-            return File(file.Content, file.ContentType, file.FileName);
+            catch(Exception ex)
+            {
+                throw new MedLogException(403, ex.Message);
+            }
+            
         }
 
 
