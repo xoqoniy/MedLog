@@ -10,6 +10,7 @@ using Microsoft.Extensions.Options;
 using Serilog;
 using Microsoft.OpenApi.Models;
 using MedLog.Middlewares;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 internal class Program
 {
     private static void Main(string[] args)
@@ -72,8 +73,13 @@ internal class Program
                 });
             });
 
-
+            //Mapping
             builder.Services.AddAutoMapper(typeof(MapperProfile));
+
+            //Convert api url name to dash case
+            builder.Services.AddControllers(options =>
+                options.Conventions.Add(
+                    new RouteTokenTransformerConvention(new RouteConfiguration())));
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
