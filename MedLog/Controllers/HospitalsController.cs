@@ -1,4 +1,5 @@
-﻿using MedLog.Service.DTOs.HospitalDTOs;
+﻿using MedLog.Domain.Configurations;
+using MedLog.Service.DTOs.HospitalDTOs;
 using MedLog.Service.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -44,10 +45,12 @@ namespace MedLog.Controllers
 
         //Get/hospitals
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<HospitalResultDto>>> GetAllAsync()
+        public async Task<ActionResult<PaginationResult<HospitalResultDto>>> GetAllAsync([FromQuery] PaginationParams @params)
         {
-            return await service.GetAllAsync();
+            var result = await service.GetAllHospitalsAsync(@params);
+            return Ok(result);
         }
+
 
         [HttpGet("city/{city}")]
         public async Task<ActionResult<IEnumerable<HospitalResultDto>>> GetHospitalsInCity(string city)

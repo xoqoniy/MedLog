@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using MedLog.DAL.IRepositories;
 using MedLog.DAL.Repositories;
+using MedLog.Domain.Configurations;
 using MedLog.Domain.Entities;
 using MedLog.Service.DTOs.AppointmentDTOs;
 using MedLog.Service.Exceptions;
+using MedLog.Service.Extensions;
 using MedLog.Service.Interfaces;
 
 namespace MedLog.Service.Services;
@@ -64,10 +66,13 @@ public class AppointmentService : IAppointmentService
         return true;
     }
 
-    public async Task<List<AppointmentResultDto>> GetAllAppointmentsAsync()
+    public async Task<PaginationResult<AppointmentResultDto>> GetAllAppointmentsAsync(PaginationParams @params)
     {
-        var appointments = await appointmentRepository.RetrieveAllAsync();
-        return mapper.Map<List<AppointmentResultDto>>(appointments);
+        var appointmentsQuery = appointmentRepository.SelectAll();
+        var pagedAppointments = await appointmentsQuery.ToPagedListAsync(@params);
+        var result = mapper.Map<List<AppointmentResultDto>>(pagedAppointments.Data);
+
+        return new PaginationResult<AppointmentResultDto>(result, pagedAppointments.TotalCount, @params.PageIndex, @params.PageSize);
     }
 
     public async Task<List<AppointmentResultDto>> GetAppointmentsByDoctorIdAsync(string doctorId)

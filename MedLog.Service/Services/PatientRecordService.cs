@@ -1,10 +1,12 @@
 ﻿
 using AutoMapper;
 using MedLog.DAL.IRepositories;
+using MedLog.Domain.Configurations;
 using MedLog.Domain.Entities;
 using MedLog.Service.DTOs.PatientRecordDTOs;
 using MedLog.Service.DTOs.UserDTOs;
 using MedLog.Service.Exceptions;
+using MedLog.Service.Extensions;
 using MedLog.Service.Interfaces;
 
 namespace MedLog.Service.Services;
@@ -44,10 +46,13 @@ public class PatientRecordService : IPatientRecordService
         return true;
     }
 
-    public async Task<List<PatientRecordResultDto>> GetAllPatientRecords()
+    public async Task<PaginationResult<PatientRecordResultDto>> GetAllPatientRecordsAsync(PaginationParams @params)
     {
-        var patientRecords = await repository.RetrieveAllAsync();
-        return mapper.Map<List<PatientRecordResultDto>>(patientRecords);
+        var patientRecordsQuery = repository.SelectAll();
+        var pagedPatientRecords = await patientRecordsQuery.ToPagedListAsync(@params);
+        var result = mapper.Map<List<PatientRecordResultDto>>(pagedPatientRecords.Data);
+
+        return new PaginationResult<PatientRecordResultDto>(result, pagedPatientRecords.TotalCount, @params.PageIndex, @params.PageSize);
     }
 
     public async Task<PatientRecordResultDto> GetPatientRecordById(string recordId)

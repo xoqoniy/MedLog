@@ -1,4 +1,5 @@
-﻿using MedLog.Service.DTOs.AppointmentDTOs;
+﻿using MedLog.Domain.Configurations;
+using MedLog.Service.DTOs.AppointmentDTOs;
 using MedLog.Service.DTOs.PatientRecordDTOs;
 using MedLog.Service.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -30,11 +31,12 @@ public class PatientRecordsController : RestFulSense
     }
     //GetAll patientRecords
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<PatientRecordResultDto>>> GetPatientRecords()
+    public async Task<ActionResult<PaginationResult<PatientRecordResultDto>>> GetPatientRecords([FromQuery] PaginationParams @params)
     {
-        var records = await service.GetAllPatientRecords();
+        var records = await service.GetAllPatientRecordsAsync(@params);
         return Ok(records);
     }
+
 
     [HttpPut("id")]
     public async Task<ActionResult<PatientRecordResultDto>> UpdateAppointmentByRecordId(string patientRecordId, PatientRecordUpdateDto dto)

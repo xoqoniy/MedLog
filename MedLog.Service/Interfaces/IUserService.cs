@@ -1,7 +1,10 @@
-﻿using MedLog.Service.DTOs.DoctorDTOs;
+﻿using MedLog.Domain.Configurations;
+using MedLog.Domain.Entities;
+using MedLog.Service.DTOs.DoctorDTOs;
 using MedLog.Service.DTOs.HospitalDTOs;
 using MedLog.Service.DTOs.UserDTOs;
 using MongoDB.Bson;
+using System.Linq.Expressions;
 
 namespace MedLog.Service.Interfaces;
 
@@ -17,5 +20,6 @@ public interface IUserService
     Task<bool> IsDoctorAvailableAtTimeAsync(DateTime appointmentDateTime, string doctorId);
     Task<List<DoctorDto>> GetDoctorsByHospitalId (string hospitalId);
     Task<List<UserResultDto>> GetNursesByHospitalId(string hospitalId);
-    Task<List<UserResultDto>> GetAllAsync ();
+    public Task<PaginationResult<UserResultDto>> GetAllAsync(
+        Expression<Func<User, bool>> expression, string search, PaginationParams @params);
 }

@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using MedLog.DAL.IRepositories;
+using MedLog.Domain.Configurations;
 using MedLog.Domain.Entities;
 using MedLog.Service.DTOs.HospitalDTOs;
 using MedLog.Service.Exceptions;
+using MedLog.Service.Extensions;
 using MedLog.Service.Interfaces;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -60,10 +62,13 @@ public class HospitalService : IHospitalService
         return true;
     }
 
-    public async Task<List<HospitalResultDto>> GetAllAsync()
+    public async Task<PaginationResult<HospitalResultDto>> GetAllHospitalsAsync(PaginationParams @params)
     {
-        var hospitals = await repository.RetrieveAllAsync();
-        return mapper.Map<List<HospitalResultDto>>(hospitals);
+        var hospitalsQuery = repository.SelectAll();
+        var pagedHospitals = await hospitalsQuery.ToPagedListAsync(@params);
+        var result = mapper.Map<List<HospitalResultDto>>(pagedHospitals.Data);
+
+        return new PaginationResult<HospitalResultDto>(result, pagedHospitals.TotalCount, @params.PageIndex, @params.PageSize);
     }
 
     public async Task<HospitalResultDto> GetByIdAsync(string id)
