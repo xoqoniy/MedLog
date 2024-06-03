@@ -1,4 +1,5 @@
 ﻿
+using MedLog.Domain.Configurations;
 using MedLog.Service.DTOs.HospitalDTOs;
 
 namespace MedLog.Service.Interfaces;
@@ -11,8 +12,9 @@ public interface IHospitalService
     Task<bool> DeleteByIdAsync (string id);
     Task<HospitalResultDto> GetByIdAsync (string id);
     Task<List<string>> GetHospitalsInCity(string city);
-    Task<List<HospitalResultDto>> GetAllAsync();
-    
+    Task<PaginationResult<HospitalResultDto>> GetAllHospitalsAsync(PaginationParams @params);
+
+
 
 
 }

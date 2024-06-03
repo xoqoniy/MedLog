@@ -1,4 +1,5 @@
-﻿using MedLog.Service.DTOs.DoctorDTOs;
+﻿using MedLog.Domain.Configurations;
+using MedLog.Service.DTOs.DoctorDTOs;
 using MedLog.Service.DTOs.UserDTOs;
 using MedLog.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -60,12 +61,14 @@ namespace MedLog.Controllers
             return user;
         }
 
-        //GET/users
+        // GET /users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserResultDto>>> GetAllAsync()
+        public async Task<ActionResult<PaginationResult<UserResultDto>>> GetAllAsync([FromQuery] PaginationParams @params, [FromQuery] string? search = null)
         {
-            return await userService.GetAllAsync();
+            var result = await userService.GetAllAsync(null, search, @params);
+            return Ok(result);
         }
+
 
         [HttpGet("doctors/by-hospital/{hospitalId}")]
         public async Task<ActionResult<IEnumerable<DoctorDto>>> GetDoctorsByHospitalId(string hospitalId)

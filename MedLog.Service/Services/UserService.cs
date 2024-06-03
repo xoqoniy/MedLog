@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.Internal;
 using MedLog.DAL.IRepositories;
+using MedLog.Domain.Configurations;
 using MedLog.Domain.Entities;
 using MedLog.Domain.Enums;
 using MedLog.Service.DTOs.AddressDTOs;
@@ -10,8 +11,8 @@ using MedLog.Service.DTOs.UserDTOs;
 using MedLog.Service.Exceptions;
 using MedLog.Service.Interfaces;
 using MongoDB.Bson;
-using System.Text.Json;
-
+using System.Linq.Expressions;
+using MedLog.Service.Extensions;
 namespace MedLog.Service.Services;
 
 public class UserService : IUserService
@@ -121,10 +122,25 @@ public class UserService : IUserService
 
     }
 
-    public async Task<List<UserResultDto>> GetAllAsync()
+    public async Task<PaginationResult<UserResultDto>> GetAllAsync(
+              Expression<Func<User, bool>> expression = null, string search = null, PaginationParams @params = null)
     {
-        var users = await repository.RetrieveAllAsync();
-        return mapper.Map<List<UserResultDto>>(users);
+        if (search == null)
+        {
+            search = string.Empty; // Or handle it according to your logic
+        }
+        var usersQuery = repository.SelectAll(expression);
+
+        if (!string.IsNullOrEmpty(search))
+        {
+            usersQuery = (MongoDB.Driver.Linq.IMongoQueryable<User>)usersQuery.Where(u => u.FirstName.ToLower().Contains(search.ToLower()) ||
+                                               u.LastName.ToLower(). Contains(search.ToLower()));
+        }
+
+        var pagedUsers = await usersQuery.ToPagedListAsync(@params);
+        var pagedUserDtos = mapper.Map<List<UserResultDto>>(pagedUsers.Data);
+
+        return new PaginationResult<UserResultDto>(pagedUserDtos, pagedUsers.TotalCount, pagedUsers.CurrentPage, pagedUsers.PageSize);
     }
 
     public async Task<UserResultDto> GetAsync(string id)

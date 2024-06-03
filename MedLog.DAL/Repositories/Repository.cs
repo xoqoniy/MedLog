@@ -7,6 +7,8 @@ using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using System.Linq.Expressions;
 using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
+using MongoDB.Driver.Linq;
 
 namespace MedLog.DAL.Repositories;
 
@@ -62,9 +64,15 @@ public class Repository<T> : IRepository<T> where T : Auditable
     }
 
     // Method to asynchronously retrieve all documents from the MongoDB collection
-    public async Task<List<T>> RetrieveAllAsync()
+    public IMongoQueryable<T> SelectAll(
+    Expression<Func<T, bool>> expression = null)
     {
-        return await _collection.Find(_filterBuilder.Empty).ToListAsync();
+        var query = _collection.AsQueryable();
+        if (expression != null)
+        {
+            query = query.Where(expression);
+        }
+        return query;
     }
 
     // Method to asynchronously retrieve a document by its ID from the MongoDB collection
