@@ -8,6 +8,6 @@ namespace MedLog.Domain.Entities
     {
         public string DoctorId { get; set; }
         public string StarGiverId { get; set; }
-        public double Star { get; set; }
+        public int Star { get; set; } //From 1 to 5 
     }
 }
