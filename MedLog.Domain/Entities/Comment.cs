@@ -2,6 +2,7 @@
 using MedLog.Domain.Common;
 using MongoDB.Bson.Serialization.Attributes;
 
+#pragma warning disable
 namespace MedLog.Domain.Entities;
 
 public class Comment : Auditable
