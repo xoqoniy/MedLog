@@ -1,6 +1,7 @@
 ﻿
 using MedLog.Domain.Common;
 using MedLog.Domain.Enums;
+using MongoDB.Bson.Serialization.Attributes;
 using System.Data;
 using System.Net;
 using System.Net.Cache;
@@ -11,25 +12,30 @@ namespace MedLog.Domain.Entities
 {
     public class User : Auditable
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public string FullName { get; set; }
         public string PhoneNumber { get; set; }
         public string Password { get; set; }
-        public int Age { get; set; }
+        public DateTimeOffset Birthday { get; set; }
         public Gender Gender { get; set; }
         public int BloodType { get; set; }
         public Address Address { get; set; }
         public Role UserRole { get; set; } = Role.User;
 
         // Additional fields for staff members
+        [BsonIgnoreIfNull]
         public string Specialization { get; set; }
+        [BsonIgnoreIfNull]
         public decimal Experience { get; set; }
 
         // HospitalId to associate user with hospital
         public string HospitalId { get; set; }
 
-        // Additional property to hold available hospitals for user selection
-        public List<Hospital> AvailableHospitals { get; set; }
+        //Rating for Doctors
+        [BsonIgnoreIfDefault]
+        public int OverallRating { get; set; } //On a scale of 1 to 5
+        [BsonIgnoreIfNull]
+        public int RatingCount { get; set; } //Count of people who rated 
+
     }
 }
  
