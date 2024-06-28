@@ -14,7 +14,7 @@ namespace MedLog.Service.DTOs.HospitalDTOs
         public string Name { get; set; }
 
         [Required(ErrorMessage = "Description is required")]
-        public string Description { get; set; }
+        public string? Description { get; set; }  = null;
 
         [Required(ErrorMessage = "Owner is required")]
         public string Owner { get; set; }

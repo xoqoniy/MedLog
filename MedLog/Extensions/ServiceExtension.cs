@@ -1,5 +1,6 @@
 ﻿using MedLog.DAL.IRepositories;
 using MedLog.DAL.Repositories;
+using MedLog.Service.Extentions;
 using MedLog.Service.Interfaces;
 using MedLog.Service.IServices;
 using MedLog.Service.Services;
@@ -21,6 +22,7 @@ public static class ServiceExtension
         services.AddScoped<IAppointmentService,  AppointmentService>();
         services.AddScoped<IPatientRecordService, PatientRecordService>();
         services.AddScoped<IFileService,  FileService>();
+
         
     }
 }
