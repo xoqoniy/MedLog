@@ -7,6 +7,7 @@ using MedLog.Service.DTOs.FileDTOs;
 using MedLog.Service.DTOs.HospitalDTOs;
 using MedLog.Service.DTOs.PatientRecordDTOs;
 using MedLog.Service.DTOs.UserDTOs;
+using System.Globalization;
 
 namespace MedLog.Service.Extentions;
 
@@ -15,7 +16,13 @@ public class MapperProfile : Profile
 	public MapperProfile()
 	{
         //User Mapping
-		CreateMap<User, UserCreationDto>().ReverseMap();
+
+        CreateMap<UserCreationDto, User>()
+           .ForMember(dest => dest.Birthday, opt => opt.MapFrom(src => src.Birthday));
+        CreateMap<User, UserCreationDto>()
+            .ForMember(dest => dest.Day, opt => opt.MapFrom(src => src.Birthday.Day))
+            .ForMember(dest => dest.Month, opt => opt.MapFrom(src => src.Birthday.Month))
+            .ForMember(dest => dest.Year, opt => opt.MapFrom(src => src.Birthday.Year));
         CreateMap<User, UserUpdateDto>().ReverseMap();
         CreateMap<User, UserResultDto>().ReverseMap();
         CreateMap<User, DoctorDto>().ReverseMap();

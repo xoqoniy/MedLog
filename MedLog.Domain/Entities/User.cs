@@ -1,10 +1,11 @@
-﻿
-using MedLog.Domain.Common;
+﻿using MedLog.Domain.Common;
 using MedLog.Domain.Enums;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using System.Data;
 using System.Net;
 using System.Net.Cache;
+using System.Text.Json.Serialization;
 
 #pragma warning disable
 
@@ -14,8 +15,9 @@ namespace MedLog.Domain.Entities
     {
         public string FullName { get; set; }
         public string PhoneNumber { get; set; }
+        [BsonIgnoreIfNull]
         public string Password { get; set; }
-        public DateTimeOffset Birthday { get; set; }
+        public DateTime Birthday { get; set; }
         public Gender Gender { get; set; }
         public int BloodType { get; set; }
         public Address Address { get; set; }

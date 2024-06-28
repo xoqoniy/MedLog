@@ -3,20 +3,13 @@
     private readonly int _minSize = 1;
     private int _pageSize = 1;
     private int _pageIndex = 1;
-
-    // MaxPageSize property directly in PaginationParams
-    public int MaxPageSize { get; set; } = 10; // Default value, can be overridden
+    private const int MaxPageSize = 10; // Static constant for MaxPageSize
 
     public PaginationParams()
     {
         // Default values for PageSize and PageIndex
         PageSize = 1;
         PageIndex = 1;
-    }
-
-    public PaginationParams(int maxPageSize)
-    {
-        MaxPageSize = maxPageSize;
     }
 
     public int PageSize

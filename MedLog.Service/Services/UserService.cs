@@ -46,6 +46,10 @@ public class UserService : IUserService
 
         // Save the User to obtain its ID
         await repository.InsertAsync(newUser);
+        // Ensure the user has a valid ID
+        if (string.IsNullOrEmpty(newUser._id))
+            throw new InvalidOperationException("Failed to create a new user.");
+
 
         // Retrieve the hospital entity by its ID
         await hospitalService.AddUserIdToHospital(selectedHospitalId, newUser._id);
@@ -133,8 +137,7 @@ public class UserService : IUserService
 
         if (!string.IsNullOrEmpty(search))
         {
-            usersQuery = (MongoDB.Driver.Linq.IMongoQueryable<User>)usersQuery.Where(u => u.FirstName.ToLower().Contains(search.ToLower()) ||
-                                               u.LastName.ToLower(). Contains(search.ToLower()));
+            usersQuery = (MongoDB.Driver.Linq.IMongoQueryable<User>)usersQuery.Where(u => u.FullName.ToLower().Contains(search.ToLower()));
         }
 
         var pagedUsers = await usersQuery.ToPagedListAsync(@params);
@@ -164,8 +167,11 @@ public class UserService : IUserService
         var doctorDtos = doctors.Select(d => new DoctorDto
         {
             Id = d._id,
-            FullName = $"{d.FirstName} {d.LastName}",
-            Specialization = d.Specialization
+            FullName = d.FullName,
+            Specialization = d.Specialization,
+            OverallRating = d.OverallRating,
+            RatingCount = d.RatingCount,
+            
         }).ToList();
         return doctorDtos;
     }

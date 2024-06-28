@@ -39,6 +39,12 @@ public class HospitalService : IHospitalService
 
         if (hospital != null)
         {
+            // Initialize UserIds if null
+            if (hospital.UserIds == null)
+            {
+                hospital.UserIds = new List<string>();
+            }
+
             // Add the new user ID to the existing collection
             hospital.UserIds.Add(newUserId);
 
@@ -55,6 +61,7 @@ public class HospitalService : IHospitalService
             throw new Exception($"Hospital with ID '{hospitalId}' not found.");
         }
     }
+
 
     public async Task<bool> DeleteByIdAsync(string id)
     {

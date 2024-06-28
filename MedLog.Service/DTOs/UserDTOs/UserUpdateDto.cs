@@ -12,15 +12,12 @@ public class UserUpdateDto
 {
     
     [Required(ErrorMessage = "Ismni to'ldirish kerak")]
-    public string FirstName { get; set; }
+    public string FullName { get; set; }
 
-    [Required(ErrorMessage = "Familiyani to'ldirish kerak")]
-    public string LastName { get; set; }
     [Required(ErrorMessage = "Telefon raqamni to'ldirish kerak")]
 
     public string PhoneNumber { get; set; }
-    public string Password { get; set; }
-    public int Age { get; set; }
+    public string Birthday { get; set; }
     public Gender Gender { get; set; }
     public int BloodType { get; set; }
     public AddressUpdateDto Address {  get; set; }
