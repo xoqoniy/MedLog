@@ -17,7 +17,7 @@ public class UserUpdateDto
     [Required(ErrorMessage = "Telefon raqamni to'ldirish kerak")]
 
     public string PhoneNumber { get; set; }
-    public string Birthday { get; set; }
+    public DateTime Birthday { get; set; }
     public Gender Gender { get; set; }
     public int BloodType { get; set; }
     public AddressUpdateDto Address {  get; set; }
