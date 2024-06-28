@@ -26,8 +26,18 @@ public class MapperProfile : Profile
         CreateMap<User, UserUpdateDto>().ReverseMap();
         CreateMap<User, UserResultDto>().ReverseMap();
         CreateMap<User, DoctorDto>().ReverseMap();
-        CreateMap<User, DoctorCreationDto>().ReverseMap();
-        CreateMap<User, NurseCreationDto>().ReverseMap();
+        CreateMap<DoctorCreationDto, User>()
+                 .ForMember(dest => dest.Birthday, opt => opt.MapFrom(src => src.Birthday));
+        CreateMap<User, DoctorCreationDto>()
+            .ForMember(dest => dest.Day, opt => opt.MapFrom(src => src.Birthday.Day))
+            .ForMember(dest => dest.Month, opt => opt.MapFrom(src => src.Birthday.Month))
+            .ForMember(dest => dest.Year, opt => opt.MapFrom(src => src.Birthday.Year));
+        CreateMap<NurseCreationDto, User>()
+                .ForMember(dest => dest.Birthday, opt => opt.MapFrom(src => src.Birthday));
+        CreateMap<User, NurseCreationDto>()
+            .ForMember(dest => dest.Day, opt => opt.MapFrom(src => src.Birthday.Day))
+            .ForMember(dest => dest.Month, opt => opt.MapFrom(src => src.Birthday.Month))
+            .ForMember(dest => dest.Year, opt => opt.MapFrom(src => src.Birthday.Year));
 
 
         //Address Mapping
